@@ -1,0 +1,274 @@
+---
+title: "Custom Plugins"
+description: "Extend Swiper with your own plugins to add custom behavior, parameters, and methods."
+---
+
+## What is a Swiper plugin?
+
+A Swiper plugin (also called a module) is a function that receives the Swiper instance and a set of helpers, and uses them to add custom parameters, hook into lifecycle events, and attach methods. Plugins follow the same interface as Swiper's built-in modules, so they integrate seamlessly.
+
+## Plugin structure
+
+A plugin is a plain function with the following signature:
+
+```js
+function myPlugin({ swiper, extendParams, on, once, off, emit }) {
+  // Called once when the Swiper instance is being set up.
+  // Register params, hook events, and add methods here.
+}
+```
+
+The function receives a single options object with these properties:
+
+| Property | Type | Description |
+|---|---|---|
+| `swiper` | `Swiper` | The Swiper instance being created. |
+| `extendParams` | `(obj) => void` | Merge additional default params into `swiper.params`. |
+| `on` | `Swiper['on']` | Register an event handler on the instance. |
+| `once` | `Swiper['once']` | Register a one-time event handler. |
+| `off` | `Swiper['off']` | Remove an event handler. |
+| `emit` | `Swiper['emit']` | Emit a custom event on the instance. |
+
+## Plugin skeleton
+
+```js
+function MyPlugin({ swiper, extendParams, on }) {
+  // 1. Register default params so users can configure your plugin
+  extendParams({
+    myPlugin: {
+      enabled: false,
+      color: 'blue',
+    },
+  });
+
+  // 2. Hook into Swiper lifecycle events
+  on('init', () => {
+    if (!swiper.params.myPlugin.enabled) return;
+    console.log('MyPlugin: initialized');
+  });
+
+  on('slideChange', () => {
+    if (!swiper.params.myPlugin.enabled) return;
+    console.log('MyPlugin: slide changed to', swiper.activeIndex);
+  });
+
+  on('destroy', () => {
+    // Clean up any resources your plugin created
+  });
+
+  // 3. Optionally add methods directly to the swiper instance
+  swiper.myPlugin = {
+    doSomething() {
+      console.log('MyPlugin method called');
+    },
+  };
+}
+```
+
+## Registering a plugin
+
+### Globally with `Swiper.use()`
+
+Register a plugin once so it applies to every Swiper instance created afterward.
+
+```js
+import Swiper from 'swiper';
+
+Swiper.use([MyPlugin]);
+
+const swiper = new Swiper('.swiper', {
+  myPlugin: {
+    enabled: true,
+  },
+});
+```
+
+### Per-instance via the `modules` option
+
+Pass the plugin in the `modules` array to scope it to a single instance.
+
+```js
+const swiper = new Swiper('.swiper', {
+  modules: [MyPlugin],
+  myPlugin: {
+    enabled: true,
+  },
+});
+```
+
+<Note>
+  The per-instance `modules` approach is preferred when you don't need a plugin on every Swiper instance on the page.
+</Note>
+
+## Accessing plugin params
+
+After calling `extendParams()`, your plugin's defaults are merged into `swiper.params`. Users can override them at initialization:
+
+```js
+const swiper = new Swiper('.swiper', {
+  modules: [MyPlugin],
+  myPlugin: {
+    enabled: true,
+    color: 'red',
+  },
+});
+
+// Inside any event handler:
+console.log(swiper.params.myPlugin.color); // 'red'
+```
+
+## Adding methods to the Swiper instance
+
+Attach a namespaced object to `swiper` inside your plugin function:
+
+```js
+function MyPlugin({ swiper, extendParams, on }) {
+  extendParams({ myPlugin: { enabled: false } });
+
+  // Expose public methods
+  swiper.myPlugin = {
+    reset() {
+      swiper.slideTo(0);
+    },
+    highlight(index) {
+      swiper.slides[index].classList.add('highlighted');
+    },
+  };
+}
+
+// Usage
+swiper.myPlugin.reset();
+swiper.myPlugin.highlight(2);
+```
+
+## Real-world example: debugger plugin
+
+The following example is adapted from the Swiper demos. It creates a `debugger` plugin that logs common events to the console when its parameter is enabled.
+
+```js
+import Swiper from 'swiper';
+import 'swiper/css';
+
+function debuggerPlugin({ swiper, extendParams, on }) {
+  // Adds `debugger: false` as a top-level Swiper param
+  extendParams({
+    debugger: false,
+  });
+
+  on('init', () => {
+    if (!swiper.params.debugger) return;
+    console.log('init');
+  });
+
+  on('click', (swiper, e) => {
+    if (!swiper.params.debugger) return;
+    console.log('click');
+  });
+
+  on('tap', (swiper, e) => {
+    if (!swiper.params.debugger) return;
+    console.log('tap');
+  });
+
+  on('doubleTap', (swiper, e) => {
+    if (!swiper.params.debugger) return;
+    console.log('doubleTap');
+  });
+
+  on('sliderMove', (swiper, e) => {
+    if (!swiper.params.debugger) return;
+    console.log('sliderMove');
+  });
+
+  on('slideChange', () => {
+    if (!swiper.params.debugger) return;
+    console.log('slideChange', swiper.previousIndex, '->', swiper.activeIndex);
+  });
+
+  on('slideChangeTransitionStart', () => {
+    if (!swiper.params.debugger) return;
+    console.log('slideChangeTransitionStart');
+  });
+
+  on('slideChangeTransitionEnd', () => {
+    if (!swiper.params.debugger) return;
+    console.log('slideChangeTransitionEnd');
+  });
+
+  on('transitionStart', () => {
+    if (!swiper.params.debugger) return;
+    console.log('transitionStart');
+  });
+
+  on('transitionEnd', () => {
+    if (!swiper.params.debugger) return;
+    console.log('transitionEnd');
+  });
+
+  on('reachBeginning', () => {
+    if (!swiper.params.debugger) return;
+    console.log('reachBeginning');
+  });
+
+  on('reachEnd', () => {
+    if (!swiper.params.debugger) return;
+    console.log('reachEnd');
+  });
+
+  on('fromEdge', () => {
+    if (!swiper.params.debugger) return;
+    console.log('fromEdge');
+  });
+}
+
+// Install the plugin globally
+Swiper.use([debuggerPlugin]);
+
+// Enable it on a specific instance
+const swiper = new Swiper('.swiper', {
+  pagination: {
+    el: '.swiper-pagination',
+    clickable: true,
+  },
+  navigation: {
+    nextEl: '.swiper-button-next',
+    prevEl: '.swiper-button-prev',
+  },
+  debugger: true,
+});
+```
+
+## TypeScript support
+
+To add TypeScript types for your plugin's params and methods, extend the Swiper module types:
+
+```ts
+import Swiper from 'swiper';
+
+interface MyPluginParams {
+  enabled?: boolean;
+  color?: string;
+}
+
+// Augment SwiperOptions to include your plugin's param key
+declare module 'swiper/types' {
+  interface SwiperOptions {
+    myPlugin?: MyPluginParams;
+  }
+}
+
+function MyPlugin({ swiper, extendParams, on }: Parameters<typeof Swiper.use>[0][number]) {
+  extendParams({
+    myPlugin: {
+      enabled: false,
+      color: 'blue',
+    },
+  });
+
+  on('init', () => {
+    const opts = swiper.params.myPlugin as MyPluginParams;
+    if (!opts?.enabled) return;
+    console.log('color:', opts.color);
+  });
+}
+```

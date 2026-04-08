@@ -1,0 +1,236 @@
+---
+title: "Events"
+description: "Listen to Swiper lifecycle and interaction events to react to slide changes, user input, and more."
+---
+
+## Registering event handlers
+
+Swiper provides four ways to listen to events.
+
+### Via the `on` initialization option
+
+Pass an `on` object when creating your Swiper instance. This is the recommended approach for events you need from the very beginning, including `init`.
+
+```js
+const swiper = new Swiper('.swiper', {
+  on: {
+    init(swiper) {
+      console.log('Swiper initialized');
+    },
+    slideChange(swiper) {
+      console.log('Active index:', swiper.activeIndex);
+    },
+  },
+});
+```
+
+### Via `swiper.on()`
+
+Attach a persistent handler after the instance is created.
+
+```js
+swiper.on('slideChange', (swiper) => {
+  console.log('Slide changed to', swiper.activeIndex);
+});
+```
+
+### Via `swiper.once()`
+
+Attach a handler that fires exactly once and is then removed automatically.
+
+```js
+swiper.once('init', (swiper) => {
+  console.log('Fired only on the first init');
+});
+```
+
+### Via `swiper.off()`
+
+Remove a previously registered handler. Pass the same function reference used in `on()`.
+
+```js
+function onSlideChange(swiper) {
+  console.log('changed');
+}
+
+swiper.on('slideChange', onSlideChange);
+
+// Later, remove it:
+swiper.off('slideChange', onSlideChange);
+
+// Remove all handlers for an event:
+swiper.off('slideChange');
+```
+
+## Catching all events with `onAny`
+
+Use `onAny` to attach a handler that receives every event emitted by the instance. The handler receives the event name as its first argument, followed by any event-specific arguments.
+
+```js
+swiper.onAny((eventName, ...args) => {
+  console.log('Event fired:', eventName, args);
+});
+```
+
+Remove the handler with `offAny`:
+
+```js
+function logAll(eventName, ...args) {
+  console.log(eventName, args);
+}
+
+swiper.onAny(logAll);
+swiper.offAny(logAll);
+```
+
+<Note>
+  With `swiper.on('init')`, the handler only fires if you set `init: false` and call `swiper.init()` manually. Use the `on.init` initialization option to handle the `init` event in the standard flow.
+</Note>
+
+---
+
+## Core events reference
+
+All handler signatures receive the Swiper instance as their first argument.
+
+### Lifecycle
+
+| Event | Signature | Description |
+|---|---|---|
+| `init` | `(swiper)` | Fired right after Swiper initialization. |
+| `afterInit` | `(swiper)` | Fired right after initialization completes. |
+| `beforeInit` | `(swiper)` | Fired right before initialization begins. |
+| `beforeDestroy` | `(swiper)` | Fired right before Swiper is destroyed. |
+| `destroy` | `(swiper)` | Fired when Swiper is destroyed. |
+
+### Slide change
+
+| Event | Signature | Description |
+|---|---|---|
+| `slideChange` | `(swiper)` | Fired when the currently active slide changes. |
+| `slidesUpdated` | `(swiper)` | Fired after slides and their sizes are calculated and updated. |
+| `slideChangeTransitionStart` | `(swiper)` | Fired at the beginning of a transition to another slide (next or previous). |
+| `slideChangeTransitionEnd` | `(swiper)` | Fired after the transition to another slide completes. |
+| `slideNextTransitionStart` | `(swiper)` | Same as `slideChangeTransitionStart` but only for forward transitions. |
+| `slideNextTransitionEnd` | `(swiper)` | Same as `slideChangeTransitionEnd` but only for forward transitions. |
+| `slidePrevTransitionStart` | `(swiper)` | Same as `slideChangeTransitionStart` but only for backward transitions. |
+| `slidePrevTransitionEnd` | `(swiper)` | Same as `slideChangeTransitionEnd` but only for backward transitions. |
+| `slideResetTransitionStart` | `(swiper)` | Fired at the beginning of a reset animation back to the current slide. |
+| `slideResetTransitionEnd` | `(swiper)` | Fired at the end of a reset animation back to the current slide. |
+| `beforeSlideChangeStart` | `(swiper)` | Fired before slide change transition starts. |
+
+### Transition
+
+| Event | Signature | Description |
+|---|---|---|
+| `transitionStart` | `(swiper)` | Fired at the beginning of any transition. |
+| `transitionEnd` | `(swiper)` | Fired after any transition completes. |
+| `beforeTransitionStart` | `(swiper, speed, internal)` | Fired before a transition starts. |
+
+### Touch and pointer
+
+| Event | Signature | Description |
+|---|---|---|
+| `touchStart` | `(swiper, event)` | Fired when the user touches Swiper. Receives the `pointerdown` event. |
+| `touchMove` | `(swiper, event)` | Fired when the user moves a finger over Swiper. Receives the `pointermove` event. |
+| `touchMoveOpposite` | `(swiper, event)` | Fired when the user moves in the direction opposite to the `direction` parameter. Receives the `pointermove` event. |
+| `sliderMove` | `(swiper, event)` | Fired when the user drags the slider. Receives the `pointermove` event. |
+| `sliderFirstMove` | `(swiper, event)` | Fired on the first touch/drag move. Receives the `TouchEvent`. |
+| `touchEnd` | `(swiper, event)` | Fired when the user releases Swiper. Receives the `pointerup` event. |
+
+### Click and tap
+
+| Event | Signature | Description |
+|---|---|---|
+| `click` | `(swiper, event)` | Fired when the user clicks or taps on Swiper. Receives the `pointerup` event. |
+| `tap` | `(swiper, event)` | Fired when the user taps on Swiper. Receives the `pointerup` event. |
+| `doubleTap` | `(swiper, event)` | Fired when the user double-taps on Swiper's container. Receives the `pointerup` event. |
+| `doubleClick` | `(swiper, event)` | Fired when the user double-clicks on Swiper. |
+
+### Progress and position
+
+| Event | Signature | Description |
+|---|---|---|
+| `progress` | `(swiper, progress)` | Fired when Swiper progress changes. `progress` is always between `0` and `1`. |
+| `reachBeginning` | `(swiper)` | Fired when Swiper reaches its beginning (initial position). |
+| `reachEnd` | `(swiper)` | Fired when Swiper reaches the last slide. |
+| `toEdge` | `(swiper)` | Fired when Swiper moves to a beginning or end position. |
+| `fromEdge` | `(swiper)` | Fired when Swiper moves away from a beginning or end position. |
+| `setTranslate` | `(swiper, translate)` | Fired when the wrapper's translate position changes. Receives the current translate value. |
+| `setTransition` | `(swiper, transition)` | Fired every time Swiper starts an animation. Receives the transition duration in milliseconds. |
+
+### Index changes
+
+| Event | Signature | Description |
+|---|---|---|
+| `activeIndexChange` | `(swiper)` | Fired when the active index changes. |
+| `snapIndexChange` | `(swiper)` | Fired when the snap index changes. |
+| `realIndexChange` | `(swiper)` | Fired when the real index changes. |
+
+### Environment and DOM
+
+| Event | Signature | Description |
+|---|---|---|
+| `resize` | `(swiper)` | Fired on window resize, right before Swiper's resize handling runs. |
+| `beforeResize` | `(swiper)` | Fired before the resize handler runs. |
+| `observerUpdate` | `(swiper)` | Fired when the observer is enabled and detects DOM mutations. |
+| `orientationchange` | `(swiper)` | Fired on device orientation change (for example, landscape to portrait). |
+| `changeDirection` | `(swiper)` | Fired when the slider direction changes. |
+
+### State
+
+| Event | Signature | Description |
+|---|---|---|
+| `update` | `(swiper)` | Fired after `swiper.update()` is called. |
+| `lock` | `(swiper)` | Fired when Swiper is locked (when `watchOverflow` is enabled and there are not enough slides). |
+| `unlock` | `(swiper)` | Fired when Swiper is unlocked. |
+
+### Loop
+
+| Event | Signature | Description |
+|---|---|---|
+| `beforeLoopFix` | `(swiper)` | Fired right before a loop fix. |
+| `loopFix` | `(swiper)` | Fired after a loop fix. |
+
+### Grid changes
+
+| Event | Signature | Description |
+|---|---|---|
+| `slidesLengthChange` | `(swiper)` | Fired when the number of slides changes. |
+| `slidesGridLengthChange` | `(swiper)` | Fired when the slides grid changes. |
+| `snapGridLengthChange` | `(swiper)` | Fired when the snap grid changes. |
+| `breakpoint` | `(swiper, breakpointParams)` | Fired on breakpoint change. Receives the new breakpoint params. |
+| `momentumBounce` | `(swiper)` | Fired on momentum bounce. |
+
+---
+
+## Module events
+
+Each module adds its own events to the `SwiperEvents` interface. Refer to the relevant module page for details.
+
+<CardGroup cols={2}>
+  <Card title="Autoplay" icon="play" href="/configuration/loop-and-autoplay">
+    `autoplayStart`, `autoplayStop`, `autoplayPause`, `autoplayResume`, `autoplay`
+  </Card>
+  <Card title="Navigation" icon="arrow-left-right" href="/modules/navigation-pagination">
+    `navigationShow`, `navigationHide`, `navigationPrev`, `navigationNext`
+  </Card>
+  <Card title="Pagination" icon="ellipsis" href="/modules/navigation-pagination">
+    `paginationRender`, `paginationUpdate`, `paginationShow`, `paginationHide`
+  </Card>
+  <Card title="Scrollbar" icon="sliders" href="/modules/navigation-pagination">
+    `scrollbarDragStart`, `scrollbarDragMove`, `scrollbarDragEnd`
+  </Card>
+  <Card title="Zoom" icon="magnifying-glass" href="/modules/accessibility">
+    `zoomChange`
+  </Card>
+  <Card title="Keyboard" icon="keyboard" href="/modules/accessibility">
+    `keyPress`
+  </Card>
+  <Card title="Mousewheel" icon="circle-dot" href="/modules/accessibility">
+    `scroll`
+  </Card>
+  <Card title="Hash Navigation" icon="hash" href="/modules/navigation-pagination">
+    `hashChange`, `hashSet`
+  </Card>
+</CardGroup>

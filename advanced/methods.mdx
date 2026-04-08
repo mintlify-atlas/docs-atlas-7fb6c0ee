@@ -1,0 +1,556 @@
+---
+title: "Methods & Properties"
+description: "Complete reference for all Swiper instance properties, navigation methods, utility methods, and static class methods."
+---
+
+## Instance properties
+
+### Configuration
+
+| Property | Type | Description |
+|---|---|---|
+| `params` | `SwiperOptions` | The active configuration object, including any breakpoint overrides currently in effect. |
+| `originalParams` | `SwiperOptions` | The original options object passed at initialization, unmodified by breakpoints. |
+
+### DOM elements
+
+| Property | Type | Description |
+|---|---|---|
+| `el` | `HTMLElement` | The Swiper container element. |
+| `wrapperEl` | `HTMLElement` | The wrapper element (`.swiper-wrapper`). |
+| `slidesEl` | `HTMLElement` | The element that directly contains the slide elements. |
+| `slides` | `HTMLElement[]` | Array of all slide elements. Access individual slides with `swiper.slides[index]`. |
+
+### Dimensions
+
+| Property | Type | Description |
+|---|---|---|
+| `width` | `number` | Width of the Swiper container in pixels. |
+| `height` | `number` | Height of the Swiper container in pixels. |
+
+### Position and progress
+
+| Property | Type | Description |
+|---|---|---|
+| `translate` | `number` | Current CSS transform translate value of the wrapper. |
+| `progress` | `number` | Current scroll progress from `0` (beginning) to `1` (end). |
+
+### Index tracking
+
+| Property | Type | Description |
+|---|---|---|
+| `activeIndex` | `number` | Index of the currently active slide. In loop mode this value is offset by the number of looped slides; use `realIndex` instead. |
+| `realIndex` | `number` | Index of the currently active slide, accounting for loop mode rearrangement. |
+| `previousIndex` | `number` | Index of the previously active slide. |
+| `snapIndex` | `number` | Current index in the snap grid. |
+| `snapGrid` | `number[]` | Array of snap positions. |
+| `slidesGrid` | `number[]` | Array of slide offsets. |
+| `slidesSizesGrid` | `number[]` | Array of slide widths. |
+
+### State flags
+
+| Property | Type | Description |
+|---|---|---|
+| `isBeginning` | `boolean` | `true` when the slider is at the leftmost/topmost position. |
+| `isEnd` | `boolean` | `true` when the slider is at the rightmost/bottommost position. |
+| `isLocked` | `boolean` | `true` when sliding is locked because all slides fit within the viewport (requires `watchOverflow: true`). |
+| `animating` | `boolean` | `true` while a transition is in progress. |
+| `enabled` | `boolean` | `true` if Swiper is enabled, `false` if it has been disabled via `swiper.disable()`. |
+| `swipeDirection` | `'prev' \| 'next'` | Direction of the most recent swipe gesture. |
+
+### Touch state
+
+The `touches` object exposes the current pointer coordinates during interaction.
+
+```js
+swiper.touches.startX    // X position where the touch began
+swiper.touches.startY    // Y position where the touch began
+swiper.touches.currentX  // Current X position
+swiper.touches.currentY  // Current Y position
+swiper.touches.diff      // Difference between startX and currentX
+```
+
+### Click tracking
+
+| Property | Type | Description |
+|---|---|---|
+| `clickedIndex` | `number` | Index of the last clicked slide. |
+| `clickedSlide` | `HTMLElement` | The last clicked slide element. |
+
+### Interaction guards
+
+These boolean properties can be set directly to prevent specific kinds of interaction.
+
+| Property | Type | Description |
+|---|---|---|
+| `allowSlideNext` | `boolean` | Set to `false` to prevent sliding to the next slide. |
+| `allowSlidePrev` | `boolean` | Set to `false` to prevent sliding to the previous slide. |
+| `allowTouchMove` | `boolean` | Set to `false` to prevent moving the slider by touch or mouse drag. |
+
+```js
+// Lock forward navigation only
+swiper.allowSlideNext = false;
+
+// Restore
+swiper.allowSlideNext = true;
+```
+
+---
+
+## Navigation methods
+
+### `slideNext(speed?, runCallbacks?)`
+
+Transition to the next slide.
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `speed` | `number` | `params.speed` | Transition duration in milliseconds. |
+| `runCallbacks` | `boolean` | `true` | Set to `false` to suppress transition events. |
+
+Returns `boolean`.
+
+```js
+swiper.slideNext();
+swiper.slideNext(500, false);
+```
+
+### `slidePrev(speed?, runCallbacks?)`
+
+Transition to the previous slide.
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `speed` | `number` | `params.speed` | Transition duration in milliseconds. |
+| `runCallbacks` | `boolean` | `true` | Set to `false` to suppress transition events. |
+
+Returns `boolean`.
+
+```js
+swiper.slidePrev();
+swiper.slidePrev(500);
+```
+
+### `slideTo(index, speed?, runCallbacks?)`
+
+Transition to the slide at the given index.
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `index` | `number` | — | Zero-based index of the target slide. |
+| `speed` | `number` | `params.speed` | Transition duration in milliseconds. |
+| `runCallbacks` | `boolean` | `true` | Set to `false` to suppress transition events. |
+
+Returns `boolean`.
+
+```js
+swiper.slideTo(3);
+swiper.slideTo(3, 800, true);
+```
+
+### `slideToLoop(index, speed?, runCallbacks?)`
+
+Same as `slideTo()` but designed for loop mode. Slides to the slide whose `realIndex` matches the given value.
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `index` | `number` | — | Real index of the target slide. |
+| `speed` | `number` | `params.speed` | Transition duration in milliseconds. |
+| `runCallbacks` | `boolean` | `true` | Set to `false` to suppress transition events. |
+
+Returns the Swiper instance.
+
+```js
+swiper.slideToLoop(2);
+```
+
+### `slideReset(speed?, runCallbacks?)`
+
+Reset the slider position to the currently active slide.
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `speed` | `number` | `params.speed` | Transition duration in milliseconds. |
+| `runCallbacks` | `boolean` | `true` | Set to `false` to suppress transition events. |
+
+Returns `boolean`.
+
+### `slideToClosest(speed?, runCallbacks?)`
+
+Reset the slider position to the closest snap point.
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `speed` | `number` | `params.speed` | Transition duration in milliseconds. |
+| `runCallbacks` | `boolean` | `true` | Set to `false` to suppress transition events. |
+
+Returns `boolean`.
+
+### `slidesPerViewDynamic()`
+
+Returns the dynamically calculated number of slides visible in the viewport. Useful only when `slidesPerView` is set to `'auto'`.
+
+```js
+const count = swiper.slidesPerViewDynamic(); // number
+```
+
+---
+
+## Slide manipulation methods
+
+These methods add and remove slides at runtime. Call `swiper.update()` afterward if you need to force an immediate recalculation.
+
+### `appendSlide(slides)`
+
+Add new slides to the end of the slide list.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `slides` | `HTMLElement \| string \| string[] \| HTMLElement[]` | One or more slides as HTML strings or elements. |
+
+```js
+swiper.appendSlide('<div class="swiper-slide">Slide 10</div>');
+
+swiper.appendSlide([
+  '<div class="swiper-slide">Slide 11</div>',
+  '<div class="swiper-slide">Slide 12</div>',
+]);
+```
+
+### `prependSlide(slides)`
+
+Add new slides to the beginning of the slide list.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `slides` | `HTMLElement \| string \| string[] \| HTMLElement[]` | One or more slides as HTML strings or elements. |
+
+```js
+swiper.prependSlide('<div class="swiper-slide">Slide 0</div>');
+```
+
+### `addSlide(index, slides)`
+
+Insert new slides at the specified index.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `index` | `number` | Position at which to insert. |
+| `slides` | `HTMLElement \| string \| string[] \| HTMLElement[]` | One or more slides as HTML strings or elements. |
+
+```js
+swiper.addSlide(2, '<div class="swiper-slide">Slide 2.5</div>');
+```
+
+### `removeSlide(slideIndex)`
+
+Remove slides by index.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `slideIndex` | `number \| number[]` | Index or array of indices to remove. |
+
+```js
+swiper.removeSlide(0);           // Remove first slide
+swiper.removeSlide([0, 1]);      // Remove first and second slides
+```
+
+### `removeAllSlides()`
+
+Remove all slides.
+
+```js
+swiper.removeAllSlides();
+```
+
+---
+
+## Utility methods
+
+### `update()`
+
+Recalculate all internal state: container size, slide count and offsets, progress, and CSS classes. Call this after making any external DOM modifications to Swiper.
+
+```js
+swiper.update();
+```
+
+### `updateSize()`
+
+Recalculate the size of the Swiper container.
+
+### `updateSlides()`
+
+Recalculate the number of slides and their offsets. Useful after adding or removing slides with JavaScript.
+
+### `updateProgress()`
+
+Recalculate Swiper's current progress value.
+
+### `updateSlidesClasses()`
+
+Update the `active`, `prev`, and `next` CSS classes on slides and pagination bullets.
+
+### `updateAutoHeight(speed?)`
+
+Force Swiper to update its height when `autoHeight` is enabled.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `speed` | `number` | Transition duration for the height change in milliseconds. |
+
+### `setProgress(progress, speed?)`
+
+Programmatically set the scroll progress.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `progress` | `number` | Value between `0` (first slide) and `1` (last slide). |
+| `speed` | `number` | Transition duration in milliseconds. |
+
+```js
+swiper.setProgress(0.5, 300); // Jump to the midpoint
+```
+
+### `changeDirection(direction?, needUpdate?)`
+
+Change the slider direction between horizontal and vertical.
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `direction` | `'horizontal' \| 'vertical'` | opposite of current | New direction. Omit to toggle. |
+| `needUpdate` | `boolean` | `true` | Call `swiper.update()` after changing. |
+
+### `changeLanguageDirection(direction)`
+
+Change the language direction of the slider.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `direction` | `'rtl' \| 'ltr'` | New language direction. |
+
+### `init(el?)`
+
+Initialize the Swiper instance. Called automatically unless `init: false` is passed in options.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `el` | `HTMLElement` | Optional container element override. |
+
+Returns the Swiper instance.
+
+```js
+const swiper = new Swiper('.swiper', { init: false });
+swiper.on('init', (s) => console.log('ready'));
+swiper.init();
+```
+
+### `destroy(deleteInstance?, cleanStyles?)`
+
+Destroy the Swiper instance and remove all event listeners.
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `deleteInstance` | `boolean` | `true` | Set to `false` to keep the Swiper instance object alive. |
+| `cleanStyles` | `boolean` | `true` | Set to `true` to remove all inline styles from slides, wrapper, and container. |
+
+```js
+swiper.destroy();
+swiper.destroy(false, true); // Keep instance, remove styles
+```
+
+### `enable()` / `disable()`
+
+Enable or disable Swiper. When disabled, all navigation elements are hidden and Swiper ignores events and interactions.
+
+```js
+swiper.disable();
+swiper.enable();
+```
+
+### `setGrabCursor()` / `unsetGrabCursor()`
+
+Programmatically set or remove the grab cursor on the container.
+
+```js
+swiper.setGrabCursor();
+swiper.unsetGrabCursor();
+```
+
+### `attachEvents()` / `detachEvents()`
+
+Re-attach or remove all internal DOM event listeners.
+
+```js
+swiper.detachEvents();
+swiper.attachEvents();
+```
+
+### `setTranslate(translate)`
+
+Set a custom CSS transform translate value on the wrapper.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `translate` | `number` | Translate value in pixels. |
+
+### `getTranslate()`
+
+Return the current CSS transform translate value of the wrapper.
+
+```js
+const tx = swiper.getTranslate();
+```
+
+### `translateTo(translate, speed, runCallbacks?, translateBounds?)`
+
+Animate the wrapper to a custom translate value.
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `translate` | `number` | — | Target translate value in pixels. |
+| `speed` | `number` | — | Transition duration in milliseconds. |
+| `runCallbacks` | `boolean` | `true` | Set to `false` to suppress transition events. |
+| `translateBounds` | `boolean` | `true` | Set to `false` to allow translation beyond the min/max bounds. |
+
+### `minTranslate()`
+
+Return the minimum (most negative) allowed translate value.
+
+### `maxTranslate()`
+
+Return the maximum allowed translate value.
+
+---
+
+## Event methods
+
+### `on(event, handler)`
+
+Add an event handler.
+
+```js
+swiper.on('slideChange', (swiper) => {
+  console.log(swiper.activeIndex);
+});
+```
+
+### `once(event, handler)`
+
+Add an event handler that fires once and is then automatically removed.
+
+```js
+swiper.once('transitionEnd', () => {
+  console.log('First transition done');
+});
+```
+
+### `off(event, handler?)` 
+
+Remove a specific handler, or all handlers for an event.
+
+```js
+swiper.off('slideChange', myHandler);
+swiper.off('slideChange'); // removes all handlers
+```
+
+### `emit(event, ...args)`
+
+Manually fire an event on the instance.
+
+```js
+swiper.emit('slideChange');
+```
+
+### `onAny(handler)`
+
+Add a handler that is called for every event. The handler receives `(eventName, ...args)`.
+
+```js
+swiper.onAny((event, ...args) => {
+  console.log(event, args);
+});
+```
+
+### `offAny(handler)`
+
+Remove a handler previously registered with `onAny`.
+
+---
+
+## Static methods and properties
+
+These are called on the `Swiper` class itself, not on an instance.
+
+### `Swiper.use(modules)`
+
+Install one or more modules globally before creating any Swiper instances.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `modules` | `SwiperModule[]` | Array of module objects to install. |
+
+```js
+import Swiper from 'swiper';
+import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+
+Swiper.use([Navigation, Pagination, Autoplay]);
+```
+
+<Tip>
+  You can also pass modules per-instance via the `modules` initialization option, which avoids globally registering modules you don't need everywhere.
+</Tip>
+
+### `Swiper.extendDefaults(options)`
+
+Extend the global Swiper defaults applied to every new instance.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `options` | `SwiperOptions` | Options to merge into the global defaults. |
+
+```js
+Swiper.extendDefaults({
+  speed: 600,
+  spaceBetween: 16,
+});
+```
+
+### `Swiper.defaults`
+
+Read the current default options object.
+
+```js
+console.log(Swiper.defaults);
+```
+
+### `Swiper.extendedDefaults`
+
+Read the options that were added via `Swiper.extendDefaults()`.
+
+```js
+console.log(Swiper.extendedDefaults);
+```
+
+---
+
+## Module-specific properties
+
+When modules are loaded, Swiper exposes their APIs as named properties on the instance. Each property provides access to that module's own methods.
+
+| Property | Module |
+|---|---|
+| `swiper.autoplay` | Autoplay |
+| `swiper.navigation` | Navigation |
+| `swiper.pagination` | Pagination |
+| `swiper.scrollbar` | Scrollbar |
+| `swiper.keyboard` | Keyboard |
+| `swiper.mousewheel` | Mousewheel |
+| `swiper.zoom` | Zoom |
+| `swiper.virtual` | Virtual |
+| `swiper.thumbs` | Thumbs |
+| `swiper.controller` | Controller |
+| `swiper.a11y` | Accessibility |
+| `swiper.freeMode` | Free Mode |
+| `swiper.hashNavigation` | Hash Navigation |
+| `swiper.history` | History |

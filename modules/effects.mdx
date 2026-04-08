@@ -1,0 +1,276 @@
+---
+title: "Transition effects"
+description: "Apply Fade, Cube, Coverflow, Flip, Creative, or Cards transition effects to your Swiper slider."
+keywords: ['swiper effects', 'swiper fade', 'swiper cube', 'swiper coverflow', 'swiper flip', 'swiper creative', 'swiper cards']
+---
+
+Swiper supports seven transition effects. The default is **Slide** (no module required). The remaining six — **Fade**, **Cube**, **Coverflow**, **Flip**, **Creative**, and **Cards** — each require importing a dedicated module.
+
+Set the active effect with the top-level `effect` parameter:
+
+```js
+const swiper = new Swiper('.swiper', {
+  modules: [EffectFade],
+  effect: 'fade',
+  fadeEffect: { crossFade: true },
+});
+```
+
+<Note>
+  When using `cssMode: true`, wrap each slide's content in `<div class="swiper-slide-transform">` so that effect transforms are applied correctly.
+</Note>
+
+---
+
+## Fade
+
+Slides cross-fade in and out. Best for full-bleed image galleries where a clean, invisible transition is preferred.
+
+### Setup
+
+```js
+import Swiper from 'swiper';
+import { EffectFade } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/effect-fade';
+```
+
+```js
+const swiper = new Swiper('.swiper', {
+  modules: [EffectFade],
+  effect: 'fade',
+  fadeEffect: {
+    crossFade: true,
+  },
+});
+```
+
+### Options (`fadeEffect`)
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `crossFade` | `boolean` | `false` | When enabled, the outgoing and incoming slides fade simultaneously. When disabled, the incoming slide fades in on top of the outgoing slide. |
+
+---
+
+## Cube
+
+Slides are arranged on the faces of a rotating 3D cube.
+
+### Setup
+
+```js
+import Swiper from 'swiper';
+import { EffectCube } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/effect-cube';
+```
+
+```js
+const swiper = new Swiper('.swiper', {
+  modules: [EffectCube],
+  effect: 'cube',
+  cubeEffect: {
+    shadow: true,
+    slideShadows: true,
+    shadowOffset: 20,
+    shadowScale: 0.94,
+  },
+});
+```
+
+### Options (`cubeEffect`)
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `slideShadows` | `boolean` | `true` | Render perspective shadows on the cube faces. |
+| `shadow` | `boolean` | `true` | Render a drop shadow beneath the cube. |
+| `shadowOffset` | `number` | `20` | Vertical offset of the drop shadow in px. |
+| `shadowScale` | `number` | `0.94` | Scale ratio applied to the drop shadow. |
+
+---
+
+## Coverflow
+
+Slides are arranged in a rotating carousel that mimics iTunes-style album art browsing.
+
+### Setup
+
+```js
+import Swiper from 'swiper';
+import { EffectCoverflow } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/effect-coverflow';
+```
+
+```js
+const swiper = new Swiper('.swiper', {
+  modules: [EffectCoverflow],
+  effect: 'coverflow',
+  centeredSlides: true,
+  slidesPerView: 'auto',
+  coverflowEffect: {
+    rotate: 50,
+    stretch: 0,
+    depth: 100,
+    modifier: 1,
+    scale: 1,
+    slideShadows: true,
+  },
+});
+```
+
+### Options (`coverflowEffect`)
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `slideShadows` | `boolean` | `true` | Render perspective shadows on adjacent slides. |
+| `rotate` | `number` | `50` | Rotation angle (in degrees) applied to non-active slides. |
+| `stretch` | `number \| string` | `0` | Additional space between slides in px or as a percentage string (e.g., `"50%"`). |
+| `depth` | `number` | `100` | Z-axis depth offset for non-active slides in px. |
+| `scale` | `number` | `1` | Scale applied to non-active slides. |
+| `modifier` | `number` | `1` | Multiplier that amplifies all effect transforms. |
+
+---
+
+## Flip
+
+The active slide flips like a card to reveal the next one.
+
+### Setup
+
+```js
+import Swiper from 'swiper';
+import { EffectFlip } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/effect-flip';
+```
+
+```js
+const swiper = new Swiper('.swiper', {
+  modules: [EffectFlip],
+  effect: 'flip',
+  flipEffect: {
+    slideShadows: true,
+    limitRotation: true,
+  },
+});
+```
+
+### Options (`flipEffect`)
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `slideShadows` | `boolean` | `true` | Render shadows on the flipping slides. |
+| `limitRotation` | `boolean` | `true` | Clamp rotation at 180° on the first and last slides to prevent over-rotation. |
+
+---
+
+## Creative
+
+A fully configurable effect that lets you define arbitrary CSS transforms for the previous and next slides. Use it to build custom entrance/exit animations.
+
+### Setup
+
+```js
+import Swiper from 'swiper';
+import { EffectCreative } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/effect-creative';
+```
+
+Each slide's position relative to the active slide determines which transform set is applied: `prev` for slides before it, `next` for slides after.
+
+```js
+const swiper = new Swiper('.swiper', {
+  modules: [EffectCreative],
+  effect: 'creative',
+  creativeEffect: {
+    prev: {
+      // Slide off to the left and shrink
+      translate: ['-120%', 0, -500],
+      opacity: 0,
+    },
+    next: {
+      // Slide in from the right and grow
+      translate: ['100%', 0, 0],
+      opacity: 0,
+    },
+  },
+});
+```
+
+### Transform object
+
+Both `prev` and `next` accept a `CreativeEffectTransform` object:
+
+| Property | Type | Description |
+|---|---|---|
+| `translate` | `(string \| number)[]` | `[x, y, z]` translation values. Numbers are treated as px; strings allow other units (e.g., `'100%'`). |
+| `rotate` | `number[]` | `[x, y, z]` rotation values in degrees. |
+| `opacity` | `number` | Slide opacity (0–1). |
+| `scale` | `number` | Slide scale factor. |
+| `shadow` | `boolean` | Render a shadow on the transformed slide. |
+| `origin` | `string` | CSS `transform-origin` value (e.g., `'left bottom'`). |
+
+### Options (`creativeEffect`)
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `prev` | `CreativeEffectTransform` | — | Transform applied to slides before the active one. |
+| `next` | `CreativeEffectTransform` | — | Transform applied to slides after the active one. |
+| `limitProgress` | `number` | `1` | How many slides away from active still receive individual transforms. Slides beyond this limit share the same state as the boundary slide. |
+| `shadowPerProgress` | `boolean` | `false` | Distribute shadow opacity across slides based on `limitProgress`. |
+| `progressMultiplier` | `number` | `1` | Multiply all transform and opacity values. |
+| `perspective` | `boolean` | `true` | Enable perspective for 3D transforms (`translateZ`, `rotateX`, `rotateY`). |
+
+---
+
+## Cards
+
+Slides stack like a deck of physical cards. Each card is offset and rotated slightly from the previous one.
+
+### Setup
+
+```js
+import Swiper from 'swiper';
+import { EffectCards } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/effect-cards';
+```
+
+```js
+const swiper = new Swiper('.swiper', {
+  modules: [EffectCards],
+  effect: 'cards',
+  cardsEffect: {
+    slideShadows: true,
+    rotate: true,
+    perSlideRotate: 2,
+    perSlideOffset: 8,
+  },
+});
+```
+
+### Options (`cardsEffect`)
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `slideShadows` | `boolean` | `true` | Render shadows on card slides. |
+| `rotate` | `boolean` | `true` | Apply a slight rotation to stacked cards. |
+| `perSlideRotate` | `number` | `2` | Rotation angle per stacked slide in degrees. |
+| `perSlideOffset` | `number` | `8` | Vertical offset per stacked slide in px. |
+
+---
+
+## Effect comparison
+
+| Effect | Module | CSS import | Use case |
+|---|---|---|---|
+| Slide | *(none)* | *(none)* | Standard horizontal or vertical sliding |
+| Fade | `EffectFade` | `effect-fade` | Full-bleed image galleries |
+| Cube | `EffectCube` | `effect-cube` | 3D rotating cube presentation |
+| Coverflow | `EffectCoverflow` | `effect-coverflow` | Album art / media browsing |
+| Flip | `EffectFlip` | `effect-flip` | Card flip reveals |
+| Creative | `EffectCreative` | `effect-creative` | Fully custom entrance/exit animations |
+| Cards | `EffectCards` | `effect-cards` | Stacked card UI |

@@ -1,97 +1,88 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "Swiper — Mobile Touch Slider"
+description: "The most modern mobile touch slider and carousel library with hardware-accelerated transitions, rich module system, and native framework integrations."
 ---
 
-## Setting up
+Swiper is a free, open-source mobile touch slider built for modern web applications. It delivers hardware-accelerated CSS transitions, a powerful module system, and first-class integrations for React, Vue, and Web Components — all with no dependencies.
 
-Get your documentation site up and running in minutes.
-
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
-
-## Make it yours
-
-Design a docs site that looks great and empowers your users.
-
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
+<CardGroup cols={2}>
+  <Card title="Get Started" icon="rocket" href="/getting-started">
+    Install Swiper and create your first slider in minutes
   </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
+  <Card title="Configuration" icon="sliders" href="/configuration/parameters">
+    Explore all available parameters and options
   </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
+  <Card title="Modules" icon="puzzle-piece" href="/modules/navigation-pagination">
+    Add navigation, pagination, effects, and more
   </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
+  <Card title="API Reference" icon="code" href="/advanced/methods">
+    Full Swiper instance methods and properties
   </Card>
-</Columns>
+</CardGroup>
 
-## Create beautiful pages
+## Framework integrations
 
-Everything you need to create world-class documentation.
+<CardGroup cols={3}>
+  <Card title="Core (Vanilla JS)" icon="js" href="/usage/core">
+    Use Swiper directly with plain JavaScript and HTML
+  </Card>
+  <Card title="React" icon="react" href="/usage/react">
+    `<Swiper>` and `<SwiperSlide>` React components
+  </Card>
+  <Card title="Vue" icon="vuejs" href="/usage/vue">
+    `<Swiper>` and `<SwiperSlide>` Vue components
+  </Card>
+</CardGroup>
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+## Why Swiper?
 
-## Need inspiration?
+<CardGroup cols={2}>
+  <Card title="Hardware-accelerated" icon="bolt">
+    CSS transforms and transitions keep animations at 60fps on mobile devices
+  </Card>
+  <Card title="Tree-shakeable" icon="leaf">
+    Only the modules you import are bundled — keep your app lean
+  </Card>
+  <Card title="Rich effects" icon="wand-magic-sparkles">
+    Fade, Cube, Coverflow, Flip, Creative, and Cards transition effects
+  </Card>
+  <Card title="Fully typed" icon="typewriter">
+    Complete TypeScript definitions for all options, methods, and events
+  </Card>
+</CardGroup>
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+## Quick start
+
+<Steps>
+  <Step title="Install Swiper">
+    ```bash
+    npm install swiper
+    ```
+  </Step>
+  <Step title="Add the HTML structure">
+    ```html
+    <div class="swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">Slide 1</div>
+        <div class="swiper-slide">Slide 2</div>
+        <div class="swiper-slide">Slide 3</div>
+      </div>
+    </div>
+    ```
+  </Step>
+  <Step title="Import and initialize">
+    ```js
+    import Swiper from 'swiper';
+    import 'swiper/css';
+
+    const swiper = new Swiper('.swiper', {
+      loop: true,
+      slidesPerView: 1,
+    });
+    ```
+  </Step>
+</Steps>
+
+<Note>
+  Looking for framework-specific setup? See the [React](/usage/react), [Vue](/usage/vue), or [Web Component](/usage/element) integration guides.
+</Note>

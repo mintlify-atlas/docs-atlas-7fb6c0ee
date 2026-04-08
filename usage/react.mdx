@@ -1,0 +1,255 @@
+---
+title: 'React'
+description: 'Use Swiper with React via the official Swiper React components.'
+---
+
+## Installation
+
+The React components are included in the `swiper` package — no separate install needed.
+
+<Tabs>
+  <Tab title="npm">
+    ```bash
+    npm install swiper
+    ```
+  </Tab>
+  <Tab title="yarn">
+    ```bash
+    yarn add swiper
+    ```
+  </Tab>
+  <Tab title="pnpm">
+    ```bash
+    pnpm add swiper
+    ```
+  </Tab>
+</Tabs>
+
+## Basic usage
+
+Import the `Swiper` and `SwiperSlide` components from `swiper/react`, import the CSS, and render your slides.
+
+```jsx App.jsx
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+
+export default function App() {
+  return (
+    <Swiper slidesPerView={1} spaceBetween={30}>
+      <SwiperSlide>Slide 1</SwiperSlide>
+      <SwiperSlide>Slide 2</SwiperSlide>
+      <SwiperSlide>Slide 3</SwiperSlide>
+    </Swiper>
+  );
+}
+```
+
+<Note>
+  All `SwiperOptions` are available as props on the `<Swiper>` component — every configuration
+  option you would pass to `new Swiper(el, options)` can be set directly as a JSX prop.
+</Note>
+
+## Using modules
+
+Import modules from `swiper/modules` and pass them via the `modules` prop. Import the corresponding CSS for each module you use.
+
+```jsx App.jsx
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+
+export default function App() {
+  return (
+    <Swiper
+      modules={[Navigation, Pagination]}
+      slidesPerView={1}
+      spaceBetween={30}
+      navigation
+      pagination={{ clickable: true }}
+      loop
+    >
+      <SwiperSlide>Slide 1</SwiperSlide>
+      <SwiperSlide>Slide 2</SwiperSlide>
+      <SwiperSlide>Slide 3</SwiperSlide>
+    </Swiper>
+  );
+}
+```
+
+## Getting the Swiper instance
+
+Use the `onSwiper` callback prop to receive the Swiper instance once it is initialized.
+
+```jsx App.jsx
+import { useRef } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+
+export default function App() {
+  const swiperRef = useRef(null);
+
+  return (
+    <>
+      <Swiper onSwiper={(swiper) => (swiperRef.current = swiper)} slidesPerView={1}>
+        <SwiperSlide>Slide 1</SwiperSlide>
+        <SwiperSlide>Slide 2</SwiperSlide>
+        <SwiperSlide>Slide 3</SwiperSlide>
+      </Swiper>
+      <button onClick={() => swiperRef.current?.slideNext()}>Next</button>
+    </>
+  );
+}
+```
+
+### TypeScript: using `SwiperRef`
+
+Use the `SwiperRef` type with `useRef` for a typed DOM element reference that exposes the `.swiper` instance.
+
+```tsx App.tsx
+import { useRef } from 'react';
+import { Swiper, SwiperSlide, SwiperRef } from 'swiper/react';
+import type { SwiperClass } from 'swiper/react';
+import 'swiper/css';
+
+export default function App() {
+  const swiperRef = useRef<SwiperRef>(null);
+
+  const handleNext = () => {
+    swiperRef.current?.swiper.slideNext();
+  };
+
+  return (
+    <>
+      <Swiper ref={swiperRef} slidesPerView={1} spaceBetween={20}>
+        <SwiperSlide>Slide 1</SwiperSlide>
+        <SwiperSlide>Slide 2</SwiperSlide>
+        <SwiperSlide>Slide 3</SwiperSlide>
+      </Swiper>
+      <button onClick={handleNext}>Next</button>
+    </>
+  );
+}
+```
+
+## `useSwiper` hook
+
+The `useSwiper` hook gives any child component access to the parent Swiper instance. It must be called inside a component rendered within `<Swiper>`.
+
+```jsx SlideControls.jsx
+import { useSwiper } from 'swiper/react';
+
+export default function SlideControls() {
+  const swiper = useSwiper();
+
+  return (
+    <div>
+      <button onClick={() => swiper.slidePrev()}>Prev</button>
+      <button onClick={() => swiper.slideNext()}>Next</button>
+    </div>
+  );
+}
+```
+
+```jsx App.jsx
+import { Swiper, SwiperSlide } from 'swiper/react';
+import SlideControls from './SlideControls';
+import 'swiper/css';
+
+export default function App() {
+  return (
+    <Swiper slidesPerView={1}>
+      <SwiperSlide>Slide 1</SwiperSlide>
+      <SwiperSlide>Slide 2</SwiperSlide>
+      <SwiperSlide>Slide 3</SwiperSlide>
+      <SlideControls />
+    </Swiper>
+  );
+}
+```
+
+## `useSwiperSlide` hook
+
+The `useSwiperSlide` hook returns state data about the slide it is called in. It must be called inside a component rendered within `<SwiperSlide>`.
+
+```jsx SlideContent.jsx
+import { useSwiperSlide } from 'swiper/react';
+
+export default function SlideContent() {
+  const slideData = useSwiperSlide();
+  // slideData: { isActive, isVisible, isPrev, isNext }
+
+  return (
+    <div>
+      {slideData.isActive ? 'Active slide' : 'Inactive slide'}
+    </div>
+  );
+}
+```
+
+```jsx App.jsx
+import { Swiper, SwiperSlide } from 'swiper/react';
+import SlideContent from './SlideContent';
+import 'swiper/css';
+
+export default function App() {
+  return (
+    <Swiper slidesPerView={1}>
+      <SwiperSlide><SlideContent /></SwiperSlide>
+      <SwiperSlide><SlideContent /></SwiperSlide>
+      <SwiperSlide><SlideContent /></SwiperSlide>
+    </Swiper>
+  );
+}
+```
+
+Alternatively, `<SwiperSlide>` accepts a render function that receives the same slide data as its argument.
+
+```jsx App.jsx
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+
+export default function App() {
+  return (
+    <Swiper slidesPerView={1}>
+      {[1, 2, 3].map((n) => (
+        <SwiperSlide key={n}>
+          {({ isActive }) => (
+            <div>{isActive ? `Slide ${n} — active` : `Slide ${n}`}</div>
+          )}
+        </SwiperSlide>
+      ))}
+    </Swiper>
+  );
+}
+```
+
+## Virtual slides
+
+Use the `Virtual` module with the `virtual` prop to render only the slides currently in view. Assign a `virtualIndex` to each `<SwiperSlide>`.
+
+```jsx App.jsx
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Virtual } from 'swiper/modules';
+import 'swiper/css';
+
+const slides = Array.from({ length: 1000 }, (_, i) => `Slide ${i + 1}`);
+
+export default function App() {
+  return (
+    <Swiper
+      modules={[Virtual]}
+      slidesPerView={3}
+      spaceBetween={10}
+      virtual
+    >
+      {slides.map((label, index) => (
+        <SwiperSlide key={label} virtualIndex={index}>
+          {label}
+        </SwiperSlide>
+      ))}
+    </Swiper>
+  );
+}
+```

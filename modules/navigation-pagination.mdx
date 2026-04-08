@@ -1,0 +1,381 @@
+---
+title: "Navigation, pagination & scrollbar"
+description: "Add prev/next buttons, pagination indicators, a scrollbar, and thumbnail navigation to your Swiper instance."
+keywords: ['swiper navigation', 'swiper pagination', 'swiper scrollbar', 'swiper thumbs']
+---
+
+Swiper ships four UI navigation modules: **Navigation**, **Pagination**, **Scrollbar**, and **Thumbs**. Import only the ones you need — each is tree-shakeable and self-contained.
+
+---
+
+## Navigation
+
+The Navigation module renders previous and next arrow buttons.
+
+### Setup
+
+```js
+import Swiper from 'swiper';
+import { Navigation } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+```
+
+Add the button elements inside your swiper container:
+
+```html
+<div class="swiper">
+  <div class="swiper-wrapper">
+    <div class="swiper-slide">Slide 1</div>
+    <div class="swiper-slide">Slide 2</div>
+  </div>
+
+  <!-- Navigation buttons -->
+  <div class="swiper-button-prev"></div>
+  <div class="swiper-button-next"></div>
+</div>
+```
+
+Pass the module and enable navigation in your Swiper config:
+
+```js
+const swiper = new Swiper('.swiper', {
+  modules: [Navigation],
+  navigation: {
+    nextEl: '.swiper-button-next',
+    prevEl: '.swiper-button-prev',
+  },
+});
+```
+
+<Note>
+  By default Swiper injects SVG arrow icons into the buttons automatically. Set `addIcons: false` to prevent this if you supply your own icon markup.
+</Note>
+
+### Options
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `enabled` | `boolean` | `true` | Enable or disable navigation. Useful with breakpoints. |
+| `nextEl` | `string \| HTMLElement \| null` | `null` | CSS selector or element for the "next" button. |
+| `prevEl` | `string \| HTMLElement \| null` | `null` | CSS selector or element for the "prev" button. |
+| `addIcons` | `boolean` | `true` | Inject built-in SVG icons into the buttons. |
+| `hideOnClick` | `boolean` | `false` | Toggle button visibility when the slider container is clicked. |
+| `disabledClass` | `string` | `'swiper-button-disabled'` | Class added to a button when it is disabled. |
+| `hiddenClass` | `string` | `'swiper-button-hidden'` | Class added to a button when it is hidden. |
+| `lockClass` | `string` | `'swiper-button-lock'` | Class added to a button when navigation is locked. |
+| `navigationDisabledClass` | `string` | `'swiper-navigation-disabled'` | Class added to the swiper container when navigation is disabled by a breakpoint. |
+
+### Methods
+
+Access navigation methods via `swiper.navigation`:
+
+```js
+swiper.navigation.update();   // Refresh enabled/disabled state
+swiper.navigation.init();     // Re-initialize navigation
+swiper.navigation.destroy();  // Tear down navigation
+```
+
+### Events
+
+```js
+swiper.on('navigationPrev', (swiper) => { /* prev button clicked */ });
+swiper.on('navigationNext', (swiper) => { /* next button clicked */ });
+swiper.on('navigationShow', (swiper) => { /* buttons became visible */ });
+swiper.on('navigationHide', (swiper) => { /* buttons became hidden */ });
+```
+
+---
+
+## Pagination
+
+The Pagination module displays indicators below (or beside) the slider. Four display types are available: `bullets`, `fraction`, `progressbar`, and `custom`.
+
+### Setup
+
+```js
+import Swiper from 'swiper';
+import { Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/pagination';
+```
+
+Add a pagination container:
+
+```html
+<div class="swiper">
+  <div class="swiper-wrapper">
+    <div class="swiper-slide">Slide 1</div>
+    <div class="swiper-slide">Slide 2</div>
+  </div>
+
+  <div class="swiper-pagination"></div>
+</div>
+```
+
+```js
+const swiper = new Swiper('.swiper', {
+  modules: [Pagination],
+  pagination: {
+    el: '.swiper-pagination',
+    clickable: true,
+  },
+});
+```
+
+### Pagination types
+
+<Tabs>
+  <Tab title="Bullets (default)">
+    Renders one dot per slide. Use `dynamicBullets` when you have many slides.
+
+    ```js
+    pagination: {
+      el: '.swiper-pagination',
+      type: 'bullets',
+      clickable: true,
+      dynamicBullets: true,
+      dynamicMainBullets: 1,
+    }
+    ```
+
+    Customize each bullet with `renderBullet`:
+
+    ```js
+    pagination: {
+      el: '.swiper-pagination',
+      renderBullet(index, className) {
+        return `<span class="${className}">${index + 1}</span>`;
+      },
+    }
+    ```
+  </Tab>
+  <Tab title="Fraction">
+    Displays the current slide index and total count (e.g., "2 / 5").
+
+    ```js
+    pagination: {
+      el: '.swiper-pagination',
+      type: 'fraction',
+      formatFractionCurrent: (number) => String(number).padStart(2, '0'),
+      formatFractionTotal: (number) => String(number).padStart(2, '0'),
+    }
+    ```
+
+    Custom HTML:
+
+    ```js
+    pagination: {
+      el: '.swiper-pagination',
+      type: 'fraction',
+      renderFraction(currentClass, totalClass) {
+        return `<span class="${currentClass}"></span> of <span class="${totalClass}"></span>`;
+      },
+    }
+    ```
+  </Tab>
+  <Tab title="Progress bar">
+    Shows a bar that fills as the user advances through slides.
+
+    ```js
+    pagination: {
+      el: '.swiper-pagination',
+      type: 'progressbar',
+      progressbarOpposite: false, // set true for opposite axis
+    }
+    ```
+  </Tab>
+  <Tab title="Custom">
+    Full control over the rendered HTML.
+
+    ```js
+    pagination: {
+      el: '.swiper-pagination',
+      type: 'custom',
+      renderCustom(swiper, current, total) {
+        return `${current} / ${total}`;
+      },
+    }
+    ```
+  </Tab>
+</Tabs>
+
+### Options
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `enabled` | `boolean` | `true` | Enable or disable pagination. Useful with breakpoints. |
+| `el` | `string \| HTMLElement \| null` | `null` | CSS selector or element for the pagination container. |
+| `type` | `'bullets' \| 'fraction' \| 'progressbar' \| 'custom'` | `'bullets'` | Pagination display type. |
+| `bulletElement` | `string` | `'span'` | HTML tag used for each bullet. |
+| `dynamicBullets` | `boolean` | `false` | Show only a few bullets at a time. Useful with many slides. |
+| `dynamicMainBullets` | `number` | `1` | Number of main (large) bullets visible when `dynamicBullets` is enabled. |
+| `clickable` | `boolean` | `false` | Navigate to a slide when its bullet is clicked. |
+| `hideOnClick` | `boolean` | `true` | Toggle pagination visibility when the slider container is clicked. |
+| `progressbarOpposite` | `boolean` | `false` | Render progressbar perpendicular to the swiper direction. |
+| `renderBullet` | `function` | `null` | Custom bullet renderer `(index, className) => string`. |
+| `renderFraction` | `function` | `null` | Custom fraction renderer `(currentClass, totalClass) => string`. |
+| `renderProgressbar` | `function` | `null` | Custom progressbar renderer `(progressbarFillClass) => string`. |
+| `renderCustom` | `function` | `null` | Custom renderer for `type: 'custom'` — `(swiper, current, total) => string`. |
+
+### Methods
+
+```js
+swiper.pagination.render();   // Re-render the pagination layout
+swiper.pagination.update();   // Update active state
+swiper.pagination.init();     // Re-initialize pagination
+swiper.pagination.destroy();  // Tear down pagination
+```
+
+### Events
+
+```js
+swiper.on('paginationRender', (swiper, paginationEl) => {
+  // Fired after pagination is rendered
+});
+
+swiper.on('paginationUpdate', (swiper, paginationEl) => {
+  // Fired whenever the pagination state updates
+});
+
+swiper.on('paginationShow', (swiper) => { /* pagination became visible */ });
+swiper.on('paginationHide', (swiper) => { /* pagination became hidden */ });
+```
+
+---
+
+## Scrollbar
+
+The Scrollbar module adds a draggable scrollbar track that represents the slider's position.
+
+### Setup
+
+```js
+import Swiper from 'swiper';
+import { Scrollbar } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/scrollbar';
+```
+
+```html
+<div class="swiper">
+  <div class="swiper-wrapper">
+    <div class="swiper-slide">Slide 1</div>
+    <div class="swiper-slide">Slide 2</div>
+  </div>
+
+  <div class="swiper-scrollbar"></div>
+</div>
+```
+
+```js
+const swiper = new Swiper('.swiper', {
+  modules: [Scrollbar],
+  scrollbar: {
+    el: '.swiper-scrollbar',
+    draggable: true,
+  },
+});
+```
+
+### Options
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `enabled` | `boolean` | `true` | Enable or disable the scrollbar. Useful with breakpoints. |
+| `el` | `string \| HTMLElement \| null` | `null` | CSS selector or element for the scrollbar container. |
+| `hide` | `boolean` | `true` | Auto-hide the scrollbar after user interaction. |
+| `draggable` | `boolean` | `false` | Allow the user to drag the scrollbar to control slider position. |
+| `snapOnRelease` | `boolean` | `false` | Snap to slide positions when the scrollbar drag is released. |
+| `dragSize` | `'auto' \| number` | `'auto'` | Size of the draggable handle in px. |
+| `lockClass` | `string` | `'swiper-scrollbar-lock'` | Class added when the scrollbar is disabled. |
+| `dragClass` | `string` | `'swiper-scrollbar-drag'` | Class applied to the draggable handle element. |
+
+### Methods
+
+```js
+swiper.scrollbar.updateSize();    // Recalculate track and handle sizes
+swiper.scrollbar.setTranslate();  // Sync scrollbar position with swiper translate
+swiper.scrollbar.init();          // Re-initialize scrollbar
+swiper.scrollbar.destroy();       // Tear down scrollbar
+```
+
+### Events
+
+```js
+swiper.on('scrollbarDragStart', (swiper, event) => { /* drag started */ });
+swiper.on('scrollbarDragMove',  (swiper, event) => { /* drag moved */ });
+swiper.on('scrollbarDragEnd',   (swiper, event) => { /* drag released */ });
+```
+
+---
+
+## Thumbs
+
+The Thumbs module links a secondary "thumbnail" swiper to the main swiper. Scrolling the main slider highlights the corresponding thumbnail.
+
+### Setup
+
+```js
+import Swiper from 'swiper';
+import { Thumbs } from 'swiper/modules';
+import 'swiper/css';
+```
+
+Create the thumbs swiper first, then pass it to the main swiper:
+
+```html
+<!-- Thumbs swiper -->
+<div class="swiper swiper-thumbs">
+  <div class="swiper-wrapper">
+    <div class="swiper-slide">Thumb 1</div>
+    <div class="swiper-slide">Thumb 2</div>
+    <div class="swiper-slide">Thumb 3</div>
+  </div>
+</div>
+
+<!-- Main swiper -->
+<div class="swiper swiper-main">
+  <div class="swiper-wrapper">
+    <div class="swiper-slide">Slide 1</div>
+    <div class="swiper-slide">Slide 2</div>
+    <div class="swiper-slide">Slide 3</div>
+  </div>
+</div>
+```
+
+```js
+const thumbsSwiper = new Swiper('.swiper-thumbs', {
+  slidesPerView: 4,
+  spaceBetween: 8,
+  watchSlidesProgress: true,
+});
+
+const mainSwiper = new Swiper('.swiper-main', {
+  modules: [Thumbs],
+  thumbs: {
+    swiper: thumbsSwiper,
+  },
+});
+```
+
+<Tip>
+  Set `watchSlidesProgress: true` on the thumbs swiper so Swiper can track which thumbnails are visible and apply the active class correctly.
+</Tip>
+
+### Options
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `swiper` | `Swiper \| string \| null` | `null` | The thumbs Swiper instance (or a CSS selector for lazy initialization). |
+| `slideThumbActiveClass` | `string` | `'swiper-slide-thumb-active'` | Class added to the active thumbnail slide. |
+| `thumbsContainerClass` | `string` | `'swiper-thumbs'` | Class added to the thumbs swiper container. |
+| `multipleActiveThumbs` | `boolean` | `true` | Allow multiple thumbnails to appear active simultaneously. |
+| `autoScrollOffset` | `number` | `0` | Number of slides from the edge that triggers auto-scrolling of the thumbs swiper. |
+
+### Methods
+
+```js
+swiper.thumbs.init();            // Initialize thumbs
+swiper.thumbs.update(initial);   // Sync active thumbnail with main swiper
+```

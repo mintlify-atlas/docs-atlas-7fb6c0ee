@@ -1,0 +1,92 @@
+{
+  "projectType": "sdk-library",
+  "projectName": "Swiper",
+  "projectDescription": "The most modern mobile touch slider and carousel library with hardware-accelerated transitions, rich module system, and native framework integrations for React, Vue, and Web Components.",
+  "theme": "luma",
+  "primaryColor": "#0494fc",
+  "lightColor": null,
+  "darkColor": null,
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "getting-started",
+              "installation"
+            ]
+          },
+          {
+            "group": "Usage",
+            "pages": [
+              "usage/core",
+              "usage/react",
+              "usage/vue",
+              "usage/element"
+            ]
+          },
+          {
+            "group": "Configuration",
+            "pages": [
+              "configuration/parameters",
+              "configuration/breakpoints",
+              "configuration/loop-and-autoplay"
+            ]
+          },
+          {
+            "group": "Modules",
+            "pages": [
+              "modules/navigation-pagination",
+              "modules/effects",
+              "modules/virtual-slides",
+              "modules/accessibility"
+            ]
+          },
+          {
+            "group": "Advanced",
+            "pages": [
+              "advanced/events",
+              "advanced/methods",
+              "advanced/custom-plugins",
+              "advanced/typescript"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Hardware-accelerated CSS transitions for smooth mobile performance",
+    "Rich module system: Navigation, Pagination, Scrollbar, Autoplay, Effects, and more",
+    "First-class React and Vue component integrations",
+    "Web Components (Custom Elements) support via swiper-element",
+    "7 transition effects: Slide, Fade, Cube, Coverflow, Flip, Creative, Cards",
+    "Virtual slides for performance with large datasets",
+    "Responsive breakpoints configuration",
+    "Full RTL (right-to-left) support",
+    "Accessibility (A11y) module",
+    "Keyboard and mousewheel navigation"
+  ],
+  "publicApiSurface": [
+    "new Swiper(container, options)",
+    "Swiper.use(modules)",
+    "swiper.slideNext(speed, runCallbacks)",
+    "swiper.slidePrev(speed, runCallbacks)",
+    "swiper.slideTo(index, speed, runCallbacks)",
+    "swiper.slideToLoop(index, speed, runCallbacks)",
+    "swiper.update()",
+    "swiper.destroy(deleteInstance, cleanStyles)",
+    "swiper.init(el)",
+    "swiper.enable() / swiper.disable()",
+    "swiper.on(event, handler)",
+    "swiper.once(event, handler)",
+    "swiper.off(event, handler)",
+    "swiper.emit(event, ...args)",
+    "Navigation, Pagination, Scrollbar, Autoplay, Keyboard, Mousewheel, Controller, Thumbs, Zoom, Virtual, FreeMode, Grid, Parallax, A11y, HashNavigation, History, EffectFade, EffectCube, EffectCoverflow, EffectFlip, EffectCreative, EffectCards (modules)",
+    "<Swiper>, <SwiperSlide>, useSwiper(), useSwiperSlide() (React)",
+    "<swiper-container>, <swiper-slide>, register() (Web Component)"
+  ]
+}

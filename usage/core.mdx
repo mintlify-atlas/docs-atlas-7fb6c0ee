@@ -1,0 +1,199 @@
+---
+title: 'Core (Vanilla JS)'
+description: 'Use Swiper with plain JavaScript and HTML — no framework required.'
+---
+
+## Installation
+
+<Tabs>
+  <Tab title="npm">
+    ```bash
+    npm install swiper
+    ```
+  </Tab>
+  <Tab title="yarn">
+    ```bash
+    yarn add swiper
+    ```
+  </Tab>
+  <Tab title="pnpm">
+    ```bash
+    pnpm add swiper
+    ```
+  </Tab>
+</Tabs>
+
+## Basic setup
+
+<Steps>
+  <Step title="Add the HTML structure">
+    Swiper requires a specific three-level element structure: a container, a wrapper, and individual slides.
+
+    ```html index.html
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width" />
+        <title>My Swiper</title>
+        <style>
+          .swiper {
+            width: 100%;
+            height: 300px;
+          }
+        </style>
+      </head>
+      <body>
+        <!-- Swiper container -->
+        <div class="swiper">
+          <!-- Swiper wrapper -->
+          <div class="swiper-wrapper">
+            <!-- Slides -->
+            <div class="swiper-slide">Slide 1</div>
+            <div class="swiper-slide">Slide 2</div>
+            <div class="swiper-slide">Slide 3</div>
+          </div>
+          <!-- Navigation buttons -->
+          <div class="swiper-button-prev"></div>
+          <div class="swiper-button-next"></div>
+          <!-- Pagination -->
+          <div class="swiper-pagination"></div>
+        </div>
+      </body>
+    </html>
+    ```
+  </Step>
+
+  <Step title="Import CSS and JavaScript">
+    Import the Swiper stylesheet and the modules you need.
+
+    ```js main.js
+    import 'swiper/css';
+    import 'swiper/css/navigation';
+    import 'swiper/css/pagination';
+
+    import Swiper from 'swiper';
+    import { Navigation, Pagination } from 'swiper/modules';
+    ```
+
+    <Note>
+      Import only the module CSS you use to keep your bundle size small. Each module
+      (`navigation`, `pagination`, `scrollbar`, etc.) ships its own stylesheet under `swiper/css/<module>`.
+    </Note>
+  </Step>
+
+  <Step title="Initialize Swiper">
+    Call `new Swiper(container, options)` with a CSS selector or DOM element and your configuration object.
+
+    ```js main.js
+    const swiper = new Swiper('.swiper', {
+      // Register the modules you imported
+      modules: [Navigation, Pagination],
+
+      // Optional parameters
+      slidesPerView: 1,
+      spaceBetween: 30,
+      loop: true,
+
+      // Navigation arrows
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+
+      // Pagination dots
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+    });
+    ```
+  </Step>
+</Steps>
+
+## Auto-create navigation elements
+
+Pass `createElements: true` to let Swiper generate the navigation, pagination, and scrollbar DOM elements automatically. You can omit those elements from your HTML entirely.
+
+```html
+<div class="swiper">
+  <div class="swiper-wrapper">
+    <div class="swiper-slide">Slide 1</div>
+    <div class="swiper-slide">Slide 2</div>
+    <div class="swiper-slide">Slide 3</div>
+  </div>
+</div>
+```
+
+```js
+import Swiper from 'swiper';
+import { Navigation, Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+
+const swiper = new Swiper('.swiper', {
+  modules: [Navigation, Pagination],
+  createElements: true,
+  navigation: true,
+  pagination: { clickable: true },
+});
+```
+
+## CDN usage
+
+You can use Swiper directly from a CDN without a build step.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Swiper CDN</title>
+    <!-- Swiper CSS (includes all module styles) -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@latest/swiper-bundle.min.css"
+    />
+    <style>
+      .swiper {
+        width: 100%;
+        height: 300px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">Slide 1</div>
+        <div class="swiper-slide">Slide 2</div>
+        <div class="swiper-slide">Slide 3</div>
+      </div>
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+      <div class="swiper-pagination"></div>
+    </div>
+
+    <!-- Swiper JS bundle (includes all modules) -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@latest/swiper-bundle.min.js"></script>
+    <script>
+      const swiper = new Swiper('.swiper', {
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        },
+        pagination: {
+          el: '.swiper-pagination',
+          clickable: true,
+        },
+      });
+    </script>
+  </body>
+</html>
+```
+
+<Tip>
+  The CDN bundle (`swiper-bundle`) includes all modules and their styles pre-bundled. Use the
+  modular imports approach when working with a build tool to tree-shake unused modules.
+</Tip>

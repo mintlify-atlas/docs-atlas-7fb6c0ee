@@ -1,0 +1,210 @@
+---
+title: "Getting Started"
+description: "Build your first Swiper slider from scratch in a few steps."
+---
+
+This guide walks you through creating a basic Swiper slider using the Core (Vanilla JS) integration. The same HTML structure and initialization pattern applies when embedding Swiper in any framework.
+
+## Prerequisites
+
+You need Swiper installed or available via CDN. See [Installation](/installation) if you haven't set it up yet.
+
+## Build your first slider
+
+<Steps>
+  <Step title="Add the HTML structure">
+    Swiper requires a specific three-level container structure. The outer `.swiper` element is the viewport, `.swiper-wrapper` is the track that moves, and each `.swiper-slide` is an individual slide.
+
+    ```html
+    <div class="swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">Slide 1</div>
+        <div class="swiper-slide">Slide 2</div>
+        <div class="swiper-slide">Slide 3</div>
+      </div>
+    </div>
+    ```
+
+    <Tip>The `.swiper` container controls the visible area. Set its width and height via CSS to define how much of the slider is visible at once.</Tip>
+  </Step>
+
+  <Step title="Import the CSS">
+    Swiper's core styles are required for layout to work correctly. Import the base stylesheet, then add any module stylesheets you need.
+
+    ```js
+    import 'swiper/css';
+    ```
+
+    If you are not using a bundler, link the stylesheet directly in your HTML `<head>`:
+
+    ```html
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@latest/swiper-bundle.min.css" />
+    ```
+  </Step>
+
+  <Step title="Initialize Swiper">
+    Import the `Swiper` class and create a new instance, passing a CSS selector (or DOM element) and an options object.
+
+    ```js
+    import Swiper from 'swiper';
+
+    const swiper = new Swiper('.swiper', {
+      // Optional parameters
+      direction: 'horizontal',
+      loop: true,
+      slidesPerView: 1,
+      spaceBetween: 16,
+    });
+    ```
+
+    Swiper initializes immediately on construction and is ready to use. The `swiper` instance exposes the full API for programmatic control.
+  </Step>
+
+  <Step title="Add navigation buttons (optional)">
+    To add previous/next arrow buttons, add the navigation HTML inside your `.swiper` container and enable the `Navigation` module.
+
+    ```html
+    <div class="swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">Slide 1</div>
+        <div class="swiper-slide">Slide 2</div>
+        <div class="swiper-slide">Slide 3</div>
+      </div>
+
+      <!-- Navigation buttons -->
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+    </div>
+    ```
+
+    Then import and register the `Navigation` module:
+
+    ```js
+    import Swiper from 'swiper';
+    import { Navigation } from 'swiper/modules';
+    import 'swiper/css';
+    import 'swiper/css/navigation';
+
+    const swiper = new Swiper('.swiper', {
+      modules: [Navigation],
+      loop: true,
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+    });
+    ```
+  </Step>
+
+  <Step title="Add pagination dots (optional)">
+    Add a pagination container and enable the `Pagination` module for clickable dot indicators.
+
+    ```html
+    <div class="swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">Slide 1</div>
+        <div class="swiper-slide">Slide 2</div>
+        <div class="swiper-slide">Slide 3</div>
+      </div>
+
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+
+      <!-- Pagination -->
+      <div class="swiper-pagination"></div>
+    </div>
+    ```
+
+    ```js
+    import Swiper from 'swiper';
+    import { Navigation, Pagination } from 'swiper/modules';
+    import 'swiper/css';
+    import 'swiper/css/navigation';
+    import 'swiper/css/pagination';
+
+    const swiper = new Swiper('.swiper', {
+      modules: [Navigation, Pagination],
+      loop: true,
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+    });
+    ```
+  </Step>
+</Steps>
+
+## Complete example
+
+Here is a self-contained example you can drop into any HTML file using CDN links:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Swiper Example</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@latest/swiper-bundle.min.css" />
+  <style>
+    .swiper {
+      width: 100%;
+      height: 300px;
+    }
+    .swiper-slide {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      background: #0494fc;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="swiper">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide">Slide 1</div>
+      <div class="swiper-slide">Slide 2</div>
+      <div class="swiper-slide">Slide 3</div>
+    </div>
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-button-next"></div>
+    <div class="swiper-pagination"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@latest/swiper-bundle.min.js"></script>
+  <script>
+    const swiper = new Swiper('.swiper', {
+      loop: true,
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+    });
+  </script>
+</body>
+</html>
+```
+
+<Note>
+  When using the CDN bundle (`swiper-bundle.min.js`), all modules are pre-registered and you do not need to import or pass `modules` explicitly. The bundle is larger than a tree-shaken import but requires no build tooling.
+</Note>
+
+## Next steps
+
+Now that you have a working slider, explore these topics:
+
+- [Installation](/installation) — all install methods and CSS import options
+- [Usage: Core](/usage/core) — complete Core JS API reference
+- [Usage: React](/usage/react) — React component usage
+- [Usage: Vue](/usage/vue) — Vue component usage
+- [Modules: Navigation & Pagination](/modules/navigation-pagination) — full module configuration

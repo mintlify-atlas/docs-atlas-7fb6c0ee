@@ -1,0 +1,71 @@
+---
+title: "Introduction"
+description: "The most modern mobile touch slider with hardware accelerated transitions and amazing native behavior."
+---
+
+Swiper is a free, open-source touch slider library focused on modern web and mobile applications. It delivers hardware-accelerated transitions, native-feeling swipe interactions, and a rich set of built-in modules — all with zero dependencies.
+
+Swiper is intentionally focused on modern browsers and platforms. It is not a jQuery plugin or a legacy compatibility shim — it is purpose-built for apps that target current environments and want the best possible performance and simplicity.
+
+## Key stats
+
+- **~42k** GitHub stars
+- **MIT** license — free for personal and commercial use
+- **Zero** runtime dependencies
+- **Tree-shakeable** — only the modules you use end up in your bundle
+- Full **TypeScript** type definitions included
+
+## Feature highlights
+
+<CardGroup cols={2}>
+  <Card title="Hardware-accelerated transitions" icon="bolt">
+    Swiper uses CSS transforms and GPU-accelerated animations for smooth, jank-free slide transitions on mobile and desktop.
+  </Card>
+  <Card title="Rich module system" icon="puzzle-piece">
+    Navigation, Pagination, Scrollbar, Autoplay, Lazy Loading, Virtual Slides, Keyboard, Mousewheel, Parallax, Zoom, and more — all opt-in.
+  </Card>
+  <Card title="Transition effects" icon="wand-magic-sparkles">
+    Choose from Fade, Flip, 3D Cube, 3D Coverflow, Cards, and Creative effects out of the box.
+  </Card>
+  <Card title="Responsive breakpoints" icon="mobile">
+    Configure different `slidesPerView`, spacing, and behavior at each breakpoint — no extra CSS required.
+  </Card>
+  <Card title="RTL support" icon="right-left">
+    Full right-to-left layout support with correct DOM ordering and touch direction handling.
+  </Card>
+  <Card title="Virtual slides" icon="layer-group">
+    Render only the slides currently in view. Essential for large datasets or content-heavy carousels.
+  </Card>
+  <Card title="Two-way control" icon="arrows-left-right">
+    Sync multiple Swiper instances together — one can drive the other, or they can control each other simultaneously.
+  </Card>
+  <Card title="Accessibility (A11y)" icon="universal-access">
+    Built-in ARIA attributes, keyboard navigation, and screen reader announcements via the A11y module.
+  </Card>
+</CardGroup>
+
+## Integration methods
+
+Swiper supports four integration approaches. Each uses the same underlying engine and parameters.
+
+| Method | Package import | Best for |
+|---|---|---|
+| **Core (Vanilla JS)** | `import Swiper from 'swiper'` | Plain HTML/JS projects, any framework |
+| **React** | `import { Swiper, SwiperSlide } from 'swiper/react'` | React 16.8+ applications |
+| **Vue** | `import { Swiper, SwiperSlide } from 'swiper/vue'` | Vue 3 applications |
+| **Web Component** | `import 'swiper/element'` | Framework-agnostic custom elements |
+
+<Note>
+  All four integration methods share the same configuration API. Parameters documented in the API reference apply equally to Core, React, Vue, and the Web Component.
+</Note>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Getting Started" href="/getting-started">
+    Build your first slider in minutes with a complete step-by-step walkthrough.
+  </Card>
+  <Card title="Installation" href="/installation">
+    Install via npm, yarn, pnpm, bun, or load from a CDN.
+  </Card>
+</CardGroup>

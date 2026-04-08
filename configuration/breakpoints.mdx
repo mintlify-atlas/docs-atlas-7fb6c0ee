@@ -1,0 +1,180 @@
+---
+title: "Responsive breakpoints"
+description: "Configure different Swiper parameters at different screen or container sizes using the breakpoints option."
+keywords: ["swiper", "breakpoints", "responsive", "mobile", "tablet", "desktop"]
+---
+
+The `breakpoints` option lets you override specific Swiper parameters based on the width of the window (or the Swiper container). When the viewport crosses a breakpoint threshold, Swiper automatically applies the corresponding settings.
+
+<Note>
+  Not all parameters can change at a breakpoint. Only parameters that do not require a layout rebuild are supported: `slidesPerView`, `slidesPerGroup`, `spaceBetween`, and `grid.rows`. Parameters such as `loop` and `effect` cannot be changed in breakpoints.
+</Note>
+
+---
+
+## Window-width breakpoints
+
+By default, breakpoint keys are treated as minimum window widths in pixels. When the window width reaches or exceeds a key, Swiper applies that breakpoint's settings.
+
+```js
+const swiper = new Swiper('.swiper', {
+  // Default (mobile-first): 1 slide
+  slidesPerView: 1,
+  spaceBetween: 10,
+
+  breakpoints: {
+    // >= 640px
+    640: {
+      slidesPerView: 2,
+      spaceBetween: 20,
+    },
+    // >= 768px
+    768: {
+      slidesPerView: 4,
+      spaceBetween: 40,
+    },
+    // >= 1024px
+    1024: {
+      slidesPerView: 5,
+      spaceBetween: 50,
+    },
+  },
+});
+```
+
+Swiper evaluates breakpoints from smallest to largest and applies the last one whose minimum width is satisfied.
+
+---
+
+## Ratio-based breakpoints
+
+Prefix a breakpoint key with `@` to use a ratio of the Swiper container's width-to-height instead of an absolute pixel value. A ratio of `@1.00` means the container is at least as wide as it is tall.
+
+```js
+const swiper = new Swiper('.swiper', {
+  slidesPerView: 1,
+  spaceBetween: 10,
+
+  breakpoints: {
+    '@0.75': {
+      slidesPerView: 2,
+      spaceBetween: 20,
+    },
+    '@1.00': {
+      slidesPerView: 3,
+      spaceBetween: 40,
+    },
+    '@1.50': {
+      slidesPerView: 4,
+      spaceBetween: 50,
+    },
+  },
+});
+```
+
+---
+
+## breakpointsBase
+
+By default, breakpoints are compared against the **window** width. Set `breakpointsBase: 'container'` to compare against the **Swiper container** width instead. This is useful when the slider is embedded inside a narrow column that does not reflect the full page width.
+
+```js
+const swiper = new Swiper('.swiper', {
+  slidesPerView: 1,
+  breakpointsBase: 'container',
+
+  breakpoints: {
+    400: { slidesPerView: 2 },
+    700: { slidesPerView: 3 },
+  },
+});
+```
+
+| Value | Behavior |
+|---|---|
+| `'window'` (default) | Breakpoint keys match the browser window width. |
+| `'container'` | Breakpoint keys match the Swiper container's width. |
+
+---
+
+## Supported parameters in breakpoints
+
+<CardGroup cols={2}>
+  <Card title="Supported" icon="check">
+    - `slidesPerView`
+    - `slidesPerGroup`
+    - `slidesPerGroupSkip`
+    - `spaceBetween`
+    - `centeredSlides`
+    - `grid.rows`
+    - `autoplay`
+    - `navigation`
+    - `pagination`
+  </Card>
+  <Card title="Not supported" icon="xmark">
+    - `loop`
+    - `effect`
+    - `direction`
+    - `speed`
+    - `cssMode`
+  </Card>
+</CardGroup>
+
+---
+
+## Real-world example: responsive gallery
+
+The following example shows a photo gallery that displays 1 slide on mobile, 2 on tablet, and 4 on desktop, with pagination dots.
+
+```html
+<div class="swiper gallery-swiper">
+  <div class="swiper-wrapper">
+    <div class="swiper-slide"><img src="photo-1.jpg" alt="Photo 1" /></div>
+    <div class="swiper-slide"><img src="photo-2.jpg" alt="Photo 2" /></div>
+    <div class="swiper-slide"><img src="photo-3.jpg" alt="Photo 3" /></div>
+    <div class="swiper-slide"><img src="photo-4.jpg" alt="Photo 4" /></div>
+    <div class="swiper-slide"><img src="photo-5.jpg" alt="Photo 5" /></div>
+    <div class="swiper-slide"><img src="photo-6.jpg" alt="Photo 6" /></div>
+    <div class="swiper-slide"><img src="photo-7.jpg" alt="Photo 7" /></div>
+    <div class="swiper-slide"><img src="photo-8.jpg" alt="Photo 8" /></div>
+  </div>
+  <div class="swiper-pagination"></div>
+</div>
+```
+
+```js
+import Swiper from 'swiper';
+import { Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/pagination';
+
+const swiper = new Swiper('.gallery-swiper', {
+  modules: [Pagination],
+
+  // Mobile default: 1 slide
+  slidesPerView: 1,
+  spaceBetween: 10,
+
+  pagination: {
+    el: '.swiper-pagination',
+    clickable: true,
+  },
+
+  breakpoints: {
+    // Tablet: 2 slides
+    640: {
+      slidesPerView: 2,
+      spaceBetween: 20,
+    },
+    // Desktop: 4 slides
+    1024: {
+      slidesPerView: 4,
+      spaceBetween: 30,
+    },
+  },
+});
+```
+
+<Tip>
+  Use a mobile-first approach: set the default parameters for the smallest screen and override them at larger breakpoints. This keeps the base configuration clean.
+</Tip>

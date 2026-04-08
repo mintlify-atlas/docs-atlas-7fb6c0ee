@@ -1,0 +1,418 @@
+---
+title: "Parameters"
+description: "All Swiper initialization parameters, grouped by category."
+keywords: ["swiper", "parameters", "options", "configuration", "settings"]
+---
+
+Swiper accepts a configuration object as its second argument. All parameters are optional and fall back to their defaults when not specified.
+
+```js
+const swiper = new Swiper('.swiper', {
+  direction: 'horizontal',
+  slidesPerView: 1,
+  spaceBetween: 20,
+  loop: true,
+});
+```
+
+---
+
+## General
+
+<ParamField path="init" type="boolean" default="true">
+  Whether Swiper initializes automatically when you create an instance. If disabled, call `swiper.init()` manually.
+</ParamField>
+
+<ParamField path="enabled" type="boolean" default="true">
+  Whether Swiper is initially enabled. When disabled, Swiper hides all navigation elements and ignores all events and interactions.
+</ParamField>
+
+<ParamField path="direction" type="string" default="'horizontal'">
+  Slide direction. Accepts `'horizontal'` or `'vertical'`.
+
+  ```js
+  const swiper = new Swiper('.swiper', {
+    direction: 'vertical',
+  });
+  ```
+</ParamField>
+
+<ParamField path="initialSlide" type="number" default="0">
+  Index of the slide to show on initialization.
+</ParamField>
+
+<ParamField path="speed" type="number" default="300">
+  Duration of the transition animation between slides, in milliseconds.
+</ParamField>
+
+<ParamField path="effect" type="string" default="'slide'">
+  Transition effect. Accepted values: `'slide'`, `'fade'`, `'cube'`, `'coverflow'`, `'flip'`, `'creative'`, `'cards'`.
+
+  <Note>Some effects require importing the corresponding module from `swiper/modules`.</Note>
+</ParamField>
+
+<ParamField path="cssMode" type="boolean" default="false">
+  When enabled, Swiper uses the native CSS Scroll Snap API. This can improve performance in simple configurations but does not support all Swiper features (cube effect, `simulateTouch`, `resistance`, `allowSlidePrev/Next`, etc.).
+</ParamField>
+
+<ParamField path="grabCursor" type="boolean" default="false">
+  Shows a grab cursor when hovering over the Swiper on desktop devices.
+</ParamField>
+
+<ParamField path="autoHeight" type="boolean" default="false">
+  When enabled, the wrapper adapts its height to match the currently active slide.
+</ParamField>
+
+<ParamField path="watchOverflow" type="boolean" default="true">
+  When enabled, Swiper disables itself and hides navigation elements when there are not enough slides to scroll.
+</ParamField>
+
+<ParamField path="updateOnWindowResize" type="boolean" default="true">
+  Recalculates slide positions on window resize or orientation change.
+</ParamField>
+
+<ParamField path="resizeObserver" type="boolean" default="true">
+  Uses `ResizeObserver` (where supported) to detect container size changes, rather than watching for window resize.
+</ParamField>
+
+<ParamField path="roundLengths" type="boolean" default="false">
+  Rounds slide width and height values to prevent blurry text on standard-resolution screens.
+</ParamField>
+
+<ParamField path="nested" type="boolean" default="false">
+  Set to `true` for a Swiper nested inside another Swiper that uses the same scroll direction. Ensures touch events are correctly intercepted.
+</ParamField>
+
+<ParamField path="createElements" type="boolean" default="false">
+  When enabled, Swiper automatically wraps slides with a `swiper-wrapper` element and creates required elements for navigation, pagination, and scrollbar if those modules are configured.
+</ParamField>
+
+<ParamField path="focusableElements" type="string" default="'input, select, option, textarea, button, video, label'">
+  CSS selector for elements on which swiping is disabled when focused.
+</ParamField>
+
+<ParamField path="modules" type="SwiperModule[]">
+  Array of Swiper modules to use.
+
+  ```js
+  import Swiper from 'swiper';
+  import { Navigation, Pagination } from 'swiper/modules';
+
+  const swiper = new Swiper('.swiper', {
+    modules: [Navigation, Pagination],
+  });
+  ```
+</ParamField>
+
+<ParamField path="width" type="number | null" default="null">
+  Forces a fixed width (in px) on the Swiper container. Use only when initializing Swiper while hidden or in SSR/test environments.
+
+  <Warning>Setting this parameter makes Swiper non-responsive.</Warning>
+</ParamField>
+
+<ParamField path="height" type="number | null" default="null">
+  Forces a fixed height (in px) on the Swiper container. Use only when initializing Swiper while hidden or in SSR/test environments.
+
+  <Warning>Setting this parameter makes Swiper non-responsive.</Warning>
+</ParamField>
+
+<ParamField path="virtualTranslate" type="boolean" default="false">
+  When enabled, Swiper operates normally but the real CSS transform value on the wrapper is never applied. Useful for custom slide transition implementations.
+</ParamField>
+
+<ParamField path="watchSlidesProgress" type="boolean" default="false">
+  Calculates each slide's progress and visibility. Slides in the viewport receive an additional `swiper-slide-visible` class.
+</ParamField>
+
+<ParamField path="preventInteractionOnTransition" type="boolean" default="false">
+  When enabled, swiping, navigation buttons, and pagination are all disabled during a slide transition.
+</ParamField>
+
+<ParamField path="allowSlidePrev" type="boolean" default="true">
+  Set to `false` to disable swiping to the previous slide.
+</ParamField>
+
+<ParamField path="allowSlideNext" type="boolean" default="true">
+  Set to `false` to disable swiping to the next slide.
+</ParamField>
+
+<ParamField path="slideToClickedSlide" type="boolean" default="false">
+  When enabled, clicking any slide navigates to that slide.
+</ParamField>
+
+<ParamField path="oneWayMovement" type="boolean" default="false">
+  When enabled, Swiper only moves forward regardless of swipe direction.
+</ParamField>
+
+---
+
+## Slides layout
+
+<ParamField path="slidesPerView" type="number | 'auto'" default="1">
+  Number of slides visible at once. Use `'auto'` to size slides based on their CSS width.
+
+  <Note>`slidesPerView: 'auto'` is not compatible with multirow mode (`grid.rows > 1`).</Note>
+
+  ```js
+  const swiper = new Swiper('.swiper', {
+    slidesPerView: 3,
+    spaceBetween: 20,
+  });
+  ```
+</ParamField>
+
+<ParamField path="spaceBetween" type="number | string" default="0">
+  Distance between slides in pixels.
+
+  <Note>Do not combine this with CSS `margin` on slide elements — it will break navigation.</Note>
+</ParamField>
+
+<ParamField path="slidesPerGroup" type="number" default="1">
+  Number of slides to advance per navigation step. Useful when `slidesPerView > 1`.
+</ParamField>
+
+<ParamField path="slidesPerGroupSkip" type="number" default="0">
+  Number of slides at the beginning that are treated as individual groups. Slides after the skipped count are grouped according to `slidesPerGroup`.
+</ParamField>
+
+<ParamField path="slidesPerGroupAuto" type="boolean" default="false">
+  For use with `slidesPerView: 'auto'` and `slidesPerGroup: 1`. When enabled, `slideNext()` and `slidePrev()` skip all slides currently in view.
+</ParamField>
+
+<ParamField path="centeredSlides" type="boolean" default="false">
+  Centers the active slide within the container instead of aligning it to the left edge.
+</ParamField>
+
+<ParamField path="centeredSlidesBounds" type="boolean" default="false">
+  Centers slides without adding gaps at the beginning and end of the slider. Requires `centeredSlides: true`. Not intended for use with `loop` or `pagination`.
+</ParamField>
+
+<ParamField path="slidesOffsetBefore" type="number" default="0">
+  Additional offset in pixels added before the first slide.
+</ParamField>
+
+<ParamField path="slidesOffsetAfter" type="number" default="0">
+  Additional offset in pixels added after the last slide.
+</ParamField>
+
+<ParamField path="centerInsufficientSlides" type="boolean" default="false">
+  Centers slides when the total number of slides is less than `slidesPerView`. Not intended for use with `loop` or `grid.rows`.
+</ParamField>
+
+<ParamField path="snapToSlideEdge" type="boolean" default="false">
+  Forces the swiper to always snap to slide edges rather than arbitrary positions. Applies only when `slidesPerView` is fractional or `'auto'`. Ignored in `loop` and `centeredSlides` modes.
+</ParamField>
+
+<ParamField path="grid" type="GridOptions">
+  Enables a multirow grid layout.
+
+  ```js
+  const swiper = new Swiper('.swiper', {
+    grid: {
+      rows: 2,
+    },
+    slidesPerView: 3,
+    spaceBetween: 10,
+  });
+  ```
+</ParamField>
+
+---
+
+## Touch & mouse
+
+<ParamField path="simulateTouch" type="boolean" default="true">
+  When enabled, Swiper accepts mouse events in the same way as touch events, allowing click-and-drag to change slides.
+</ParamField>
+
+<ParamField path="touchRatio" type="number" default="1">
+  Multiplier applied to the touch movement distance.
+</ParamField>
+
+<ParamField path="touchAngle" type="number" default="45">
+  Maximum angle (in degrees) from the slide axis at which a touch movement is recognized as a swipe.
+</ParamField>
+
+<ParamField path="shortSwipes" type="boolean" default="true">
+  Set to `false` to disable short swipes.
+</ParamField>
+
+<ParamField path="longSwipes" type="boolean" default="true">
+  Set to `false` to disable long swipes.
+</ParamField>
+
+<ParamField path="longSwipesRatio" type="number" default="0.5">
+  Fraction of slide width that must be covered during a long swipe to trigger navigation to the next or previous slide.
+</ParamField>
+
+<ParamField path="longSwipesMs" type="number" default="300">
+  Minimum duration (in ms) of a touch gesture to be considered a long swipe.
+</ParamField>
+
+<ParamField path="followFinger" type="boolean" default="true">
+  When enabled, the slider moves as the user drags. When disabled, it only animates after the user releases.
+</ParamField>
+
+<ParamField path="allowTouchMove" type="boolean" default="true">
+  When set to `false`, slides can only be changed via API methods such as `slidePrev()` or `slideNext()`.
+</ParamField>
+
+<ParamField path="threshold" type="number" default="5">
+  Minimum swipe distance in pixels before Swiper starts moving. Helps prevent accidental swipes.
+</ParamField>
+
+<ParamField path="touchEventsTarget" type="string" default="'wrapper'">
+  The element that listens for touch events. Accepts `'container'` or `'wrapper'`.
+</ParamField>
+
+<ParamField path="touchStartPreventDefault" type="boolean" default="true">
+  When enabled, the `pointerdown` event default is prevented.
+</ParamField>
+
+<ParamField path="touchMoveStopPropagation" type="boolean" default="false">
+  When enabled, `touchmove` event propagation is stopped.
+</ParamField>
+
+<ParamField path="passiveListeners" type="boolean" default="true">
+  Uses passive event listeners where possible to improve scroll performance on mobile. Disable only if you need to call `e.preventDefault()` and encounter a conflict.
+</ParamField>
+
+<ParamField path="touchReleaseOnEdges" type="boolean" default="false">
+  Releases touch events at the beginning and end of the slider so the page can continue scrolling. Works only with touch events (not pointer events). Requires `threshold: 0`.
+</ParamField>
+
+<ParamField path="edgeSwipeDetection" type="boolean | string" default="false">
+  Releases Swiper events at the screen edge to allow system swipe-back navigation in apps. Set to `'prevent'` to block system navigation instead. Works only on iOS/Android (touch events only).
+</ParamField>
+
+<ParamField path="edgeSwipeThreshold" type="number" default="20">
+  Width in pixels from the left edge of the screen within which touch events are released for swipe-back navigation.
+</ParamField>
+
+<ParamField path="resistance" type="boolean" default="true">
+  Enables rubber-band resistance when swiping past the first or last slide.
+</ParamField>
+
+<ParamField path="resistanceRatio" type="number" default="0.85">
+  Controls the strength of resistance at the boundaries.
+</ParamField>
+
+<ParamField path="noSwiping" type="boolean" default="true">
+  Disables swiping on elements that match `noSwipingClass` or `noSwipingSelector`.
+</ParamField>
+
+<ParamField path="noSwipingClass" type="string" default="'swiper-no-swiping'">
+  CSS class name for elements on which swiping is disabled.
+</ParamField>
+
+<ParamField path="noSwipingSelector" type="string">
+  CSS selector for elements on which swiping is disabled. For example, `'input'` disables swiping on all input fields.
+</ParamField>
+
+<ParamField path="preventClicks" type="boolean" default="true">
+  Prevents accidental link clicks during swiping.
+</ParamField>
+
+<ParamField path="preventClicksPropagation" type="boolean" default="true">
+  Stops click event propagation on links during swiping.
+</ParamField>
+
+---
+
+## Loop & rewind
+
+<ParamField path="loop" type="boolean" default="false">
+  Enables continuous loop mode. Swiper clones slides at the edges to create the illusion of infinite scrolling.
+
+  See [Loop mode & autoplay](/configuration/loop-and-autoplay) for requirements and details.
+</ParamField>
+
+<ParamField path="loopAdditionalSlides" type="number" default="0">
+  Increases the number of cloned slides added for looping. Useful when `slidesPerView` changes across breakpoints.
+</ParamField>
+
+<ParamField path="loopPreventsSliding" type="boolean" default="true">
+  When enabled, `slideNext()` and `slidePrev()` do nothing while a loop transition is in progress, preventing rapid-click issues.
+</ParamField>
+
+<ParamField path="loopAddBlankSlides" type="boolean" default="true">
+  Automatically adds blank slides if the total number of slides is not evenly divisible by `slidesPerGroup` or `grid.rows`.
+</ParamField>
+
+<ParamField path="rewind" type="boolean" default="false">
+  Enables rewind mode. Pressing "next" on the last slide returns to the first slide; pressing "prev" on the first slide jumps to the last slide.
+
+  <Warning>Do not use `rewind` together with `loop`.</Warning>
+</ParamField>
+
+---
+
+## Lazy loading
+
+<ParamField path="lazyPreloadPrevNext" type="number" default="0">
+  Number of adjacent slides to preload when using lazy loading. For example, `1` preloads one slide before and one after the active slide.
+</ParamField>
+
+<ParamField path="lazyPreloaderClass" type="string" default="'swiper-lazy-preloader'">
+  CSS class name applied to the lazy preloader element.
+</ParamField>
+
+---
+
+## Observer
+
+<ParamField path="observer" type="boolean" default="false">
+  When enabled, Swiper watches for DOM mutations on itself and its elements. Swiper reinitializes automatically when its style or child elements change (for example, when slides are added or removed dynamically).
+</ParamField>
+
+<ParamField path="observeSlideChildren" type="boolean" default="false">
+  Also watches for DOM mutations on slide child elements.
+</ParamField>
+
+<ParamField path="observeParents" type="boolean" default="false">
+  Also watches for DOM mutations on Swiper's parent elements.
+</ParamField>
+
+---
+
+## CSS classes
+
+These parameters let you customize the CSS class names that Swiper applies. Change them only if you need to avoid conflicts with existing styles — you will also need to update your Swiper CSS to match.
+
+<Note>Class name parameters are not supported in Swiper React or Vue components.</Note>
+
+<ParamField path="slideClass" type="string" default="'swiper-slide'">
+  CSS class name for each slide element.
+</ParamField>
+
+<ParamField path="slideActiveClass" type="string" default="'swiper-slide-active'">
+  CSS class name for the currently active slide.
+</ParamField>
+
+<ParamField path="slideNextClass" type="string" default="'swiper-slide-next'">
+  CSS class name for the slide immediately after the active slide.
+</ParamField>
+
+<ParamField path="slidePrevClass" type="string" default="'swiper-slide-prev'">
+  CSS class name for the slide immediately before the active slide.
+</ParamField>
+
+<ParamField path="slideVisibleClass" type="string" default="'swiper-slide-visible'">
+  CSS class name for slides that are partially or fully visible in the viewport.
+</ParamField>
+
+<ParamField path="slideFullyVisibleClass" type="string" default="'swiper-slide-fully-visible'">
+  CSS class name for slides that are fully visible in the viewport.
+</ParamField>
+
+<ParamField path="slideBlankClass" type="string" default="'swiper-slide-blank'">
+  CSS class name for blank slides added automatically by loop mode when `loopAddBlankSlides` is enabled.
+</ParamField>
+
+<ParamField path="wrapperClass" type="string" default="'swiper-wrapper'">
+  CSS class name for the slides wrapper element.
+</ParamField>
+
+<ParamField path="containerModifierClass" type="string" default="'swiper-'">
+  Prefix for modifier CSS classes added to the Swiper container based on configuration (for example, `swiper-horizontal`).
+</ParamField>

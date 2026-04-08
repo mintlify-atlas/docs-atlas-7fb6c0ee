@@ -1,0 +1,292 @@
+---
+title: "Accessibility & keyboard control"
+description: "Make your Swiper slider accessible with ARIA attributes, keyboard navigation, mousewheel support, and touch zoom."
+keywords: ['swiper accessibility', 'swiper a11y', 'swiper keyboard', 'swiper mousewheel', 'swiper zoom', 'swiper aria']
+---
+
+Four modules cover accessibility and alternative input methods: **A11y** (ARIA attributes), **Keyboard** (arrow/page key navigation), **Mousewheel** (scroll-wheel navigation), and **Zoom** (pinch and double-tap zoom for images).
+
+---
+
+## A11y
+
+The A11y module adds ARIA roles and labels to the swiper container, slides, and navigation elements so that assistive technologies such as screen readers can announce slider state correctly.
+
+### Setup
+
+```js
+import Swiper from 'swiper';
+import { A11y } from 'swiper/modules';
+import 'swiper/css';
+```
+
+```js
+const swiper = new Swiper('.swiper', {
+  modules: [A11y],
+  a11y: {
+    enabled: true,
+    prevSlideMessage: 'Previous slide',
+    nextSlideMessage: 'Next slide',
+  },
+});
+```
+
+### What A11y adds
+
+- `role="region"` and an `aria-label` on the swiper container (when `containerMessage` is set).
+- `aria-label` on each navigation button, updated as the slider moves.
+- `aria-live` on the wrapper element so screen readers announce slide changes.
+- `role="group"` (or a custom value via `slideRole`) on each slide.
+- A visually hidden live region that announces the current slide to screen readers.
+
+### Options
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `enabled` | `boolean` | `true` | Enable or disable the A11y module. |
+| `prevSlideMessage` | `string` | `'Previous slide'` | `aria-label` for the previous navigation button. |
+| `nextSlideMessage` | `string` | `'Next slide'` | `aria-label` for the next navigation button. |
+| `firstSlideMessage` | `string` | `'This is the first slide'` | Label applied to the prev button when on the first slide. |
+| `lastSlideMessage` | `string` | `'This is the last slide'` | Label applied to the next button when on the last slide. |
+| `paginationBulletMessage` | `string` | `'Go to slide {{index}}'` | `aria-label` for each pagination bullet. Use `{{index}}` as a placeholder. |
+| `slideLabelMessage` | `string` | `'{{index}} / {{slidesLength}}'` | `aria-label` for each slide. Supports `{{index}}` and `{{slidesLength}}`. |
+| `containerMessage` | `string \| null` | `null` | `aria-label` applied to the outer swiper container. |
+| `containerRoleDescriptionMessage` | `string \| null` | `null` | `aria-roledescription` applied to the swiper container. |
+| `containerRole` | `string \| null` | `null` | `role` attribute for the swiper container. |
+| `itemRoleDescriptionMessage` | `string \| null` | `null` | `aria-roledescription` applied to each slide element. |
+| `slideRole` | `string` | `'group'` | `role` attribute applied to each slide. |
+| `id` | `string \| number \| null` | `null` | `id` attribute for the swiper wrapper. Auto-generated when `null`. |
+| `notificationClass` | `string` | `'swiper-notification'` | Class of the hidden live region element used for screen reader announcements. |
+| `scrollOnFocus` | `boolean` | `true` | Scroll the slider to a slide when it receives keyboard focus. |
+| `wrapperLiveRegion` | `boolean` | `true` | Apply `aria-live` to the wrapper. Value is `'off'` during autoplay, `'polite'` otherwise. |
+
+---
+
+## Keyboard
+
+The Keyboard module lets users navigate slides using the arrow keys and, optionally, the Page Up / Page Down keys.
+
+### Setup
+
+```js
+import Swiper from 'swiper';
+import { Keyboard } from 'swiper/modules';
+import 'swiper/css';
+```
+
+```js
+const swiper = new Swiper('.swiper', {
+  modules: [Keyboard],
+  keyboard: {
+    enabled: true,
+    onlyInViewport: true,
+  },
+});
+```
+
+### Options
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `enabled` | `boolean` | `false` | Enable keyboard navigation. |
+| `onlyInViewport` | `boolean` | `true` | Only respond to key events when the swiper is visible in the viewport. Useful when multiple swipers exist on the same page. |
+| `pageUpDown` | `boolean` | `true` | Also respond to the Page Up and Page Down keys. |
+| `speed` | `number` | `undefined` | Transition speed for keyboard-triggered navigation in ms. Inherits the global `speed` setting when not set. |
+
+### Methods
+
+```js
+swiper.keyboard.enable();   // Start listening for key events
+swiper.keyboard.disable();  // Stop listening for key events
+```
+
+```js
+// Check current state
+console.log(swiper.keyboard.enabled); // true | false
+```
+
+### Events
+
+```js
+swiper.on('keyPress', (swiper, keyCode) => {
+  console.log('Key pressed:', keyCode);
+});
+```
+
+---
+
+## Mousewheel
+
+The Mousewheel module maps scroll-wheel input to slide navigation.
+
+### Setup
+
+```js
+import Swiper from 'swiper';
+import { Mousewheel } from 'swiper/modules';
+import 'swiper/css';
+```
+
+```js
+const swiper = new Swiper('.swiper', {
+  modules: [Mousewheel],
+  mousewheel: {
+    enabled: true,
+    forceToAxis: true,
+  },
+});
+```
+
+### Options
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `enabled` | `boolean` | `false` | Enable mousewheel control. |
+| `forceToAxis` | `boolean` | `false` | Restrict mousewheel to the swiper's primary axis. Horizontal swipers only respond to horizontal scroll; vertical swipers to vertical scroll. |
+| `releaseOnEdges` | `boolean` | `false` | Release scroll events to the page when the swiper reaches its first or last slide. |
+| `invert` | `boolean` | `false` | Reverse the scroll direction relative to the slide direction. |
+| `sensitivity` | `number` | `1` | Multiplier applied to the scroll delta. Higher values make the swiper more responsive. |
+| `eventsTarget` | `'container' \| 'wrapper' \| string \| HTMLElement` | `'container'` | Element that listens for wheel events. |
+| `thresholdDelta` | `number \| null` | `null` | Minimum scroll delta required to trigger a slide change. |
+| `thresholdTime` | `number \| null` | `null` | Minimum time in ms between two scroll events for a slide change to trigger. |
+| `noMousewheelClass` | `string` | `'swiper-no-mousewheel'` | Scroll events on elements with this class are ignored. |
+
+### Methods
+
+```js
+swiper.mousewheel.enable();   // Start listening for scroll events
+swiper.mousewheel.disable();  // Stop listening for scroll events
+```
+
+```js
+// Check current state
+console.log(swiper.mousewheel.enabled); // true | false
+```
+
+### Events
+
+```js
+swiper.on('scroll', (swiper, event) => {
+  // event is the native WheelEvent
+  console.log('Scroll delta:', event.deltaY);
+});
+```
+
+<Tip>
+  For a full-page scroll hijack effect, combine `releaseOnEdges: true` with `direction: 'vertical'` so the page scrolls normally once the user reaches the first or last slide.
+</Tip>
+
+---
+
+## Zoom
+
+The Zoom module enables pinch-to-zoom and double-tap zoom on slide images. It requires a small wrapper element inside each zoomable slide.
+
+### Setup
+
+```js
+import Swiper from 'swiper';
+import { Zoom } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/zoom';
+```
+
+Wrap each slide's zoomable content in `.swiper-zoom-container`:
+
+```html
+<div class="swiper">
+  <div class="swiper-wrapper">
+    <div class="swiper-slide">
+      <div class="swiper-zoom-container">
+        <img src="photo.jpg" alt="A landscape photograph" />
+      </div>
+    </div>
+    <div class="swiper-slide">
+      <div class="swiper-zoom-container">
+        <img src="photo2.jpg" alt="A portrait photograph" />
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+```js
+const swiper = new Swiper('.swiper', {
+  modules: [Zoom],
+  zoom: {
+    maxRatio: 3,
+    minRatio: 1,
+    toggle: true,
+  },
+});
+```
+
+### Options
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `maxRatio` | `number` | `3` | Maximum zoom multiplier. |
+| `minRatio` | `number` | `1` | Minimum zoom multiplier. |
+| `toggle` | `boolean` | `true` | Enable zoom toggle on double-tap. |
+| `limitToOriginalSize` | `boolean` | `false` | Prevent zooming past the image's natural pixel size (1:1 scale). |
+| `panOnMouseMove` | `boolean` | `false` | Pan the zoomed image while moving the mouse over it. |
+| `containerClass` | `string` | `'swiper-zoom-container'` | Class of the zoom wrapper element inside each slide. |
+| `zoomedSlideClass` | `string` | `'swiper-slide-zoomed'` | Class added to the slide element when it is in a zoomed state. |
+
+### Methods
+
+```js
+swiper.zoom.in(ratio?);  // Zoom into the active slide. Optionally pass a custom ratio.
+swiper.zoom.out();       // Zoom out to the minimum ratio.
+swiper.zoom.toggle();    // Toggle between zoomed and default state.
+
+swiper.zoom.enable();    // Activate zoom module
+swiper.zoom.disable();   // Deactivate zoom module
+```
+
+```js
+// Read current scale
+console.log(swiper.zoom.scale); // e.g. 2.5
+```
+
+### Events
+
+```js
+swiper.on('zoomChange', (swiper, scale, imageEl, slideEl) => {
+  console.log('New zoom scale:', scale);
+});
+```
+
+---
+
+## Combining modules
+
+You can combine any of these modules in a single swiper:
+
+```js
+import Swiper from 'swiper';
+import { Navigation, A11y, Keyboard, Mousewheel } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+
+const swiper = new Swiper('.swiper', {
+  modules: [Navigation, A11y, Keyboard, Mousewheel],
+  navigation: {
+    nextEl: '.swiper-button-next',
+    prevEl: '.swiper-button-prev',
+  },
+  a11y: {
+    prevSlideMessage: 'Previous slide',
+    nextSlideMessage: 'Next slide',
+    containerMessage: 'Featured products',
+  },
+  keyboard: {
+    enabled: true,
+    onlyInViewport: true,
+  },
+  mousewheel: {
+    enabled: true,
+    forceToAxis: true,
+  },
+});
+```

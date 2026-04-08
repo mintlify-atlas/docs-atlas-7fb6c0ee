@@ -1,0 +1,345 @@
+---
+title: "TypeScript"
+description: "Swiper ships with complete TypeScript definitions. Import types directly from swiper/types."
+---
+
+Swiper is written in TypeScript and ships type declarations for all public APIs. No additional `@types` packages are required.
+
+## Importing types
+
+All types are available from the `swiper/types` entry point.
+
+```ts
+import type {
+  SwiperOptions,
+  SwiperEvents,
+  SwiperModule,
+} from 'swiper/types';
+```
+
+Import the `Swiper` class itself from the default entry point:
+
+```ts
+import Swiper from 'swiper';
+```
+
+## Core types
+
+### `SwiperOptions`
+
+The full configuration object accepted by the `Swiper` constructor. Every initialization parameter is defined here.
+
+```ts
+import Swiper from 'swiper';
+import type { SwiperOptions } from 'swiper/types';
+
+const options: SwiperOptions = {
+  slidesPerView: 3,
+  spaceBetween: 20,
+  loop: true,
+  speed: 400,
+};
+
+const swiper = new Swiper('.swiper', options);
+```
+
+### `Swiper` (instance type)
+
+Use the imported `Swiper` class as both the constructor and the instance type.
+
+```ts
+import Swiper from 'swiper';
+
+let swiper: Swiper;
+
+swiper = new Swiper('.swiper', {
+  slidesPerView: 1,
+});
+
+// Instance is fully typed
+console.log(swiper.activeIndex);  // number
+console.log(swiper.isBeginning);  // boolean
+swiper.slideNext(300);
+```
+
+### `SwiperEvents`
+
+A map of all event names to their handler signatures. Use this to type individual handlers or event maps.
+
+```ts
+import type { SwiperEvents } from 'swiper/types';
+
+// Type a handler directly
+const onSlideChange: SwiperEvents['slideChange'] = (swiper) => {
+  console.log('Active index:', swiper.activeIndex);
+};
+
+// Type an event-to-handler map
+const handlers: Partial<SwiperEvents> = {
+  init(swiper) {
+    console.log('initialized');
+  },
+  slideChange(swiper) {
+    console.log('changed to', swiper.activeIndex);
+  },
+  progress(swiper, progress) {
+    console.log('progress:', progress);
+  },
+};
+
+const swiper = new Swiper('.swiper', { on: handlers });
+```
+
+### `SwiperModule`
+
+The type for a Swiper plugin or built-in module function. Use this when typing custom plugins or when storing references to modules.
+
+```ts
+import type { SwiperModule } from 'swiper/types';
+import { Navigation, Pagination } from 'swiper/modules';
+
+const modules: SwiperModule[] = [Navigation, Pagination];
+```
+
+## Module-specific option types
+
+Each built-in module exports its own options interface. Import them from `swiper/types` when you need to type only part of the configuration.
+
+```ts
+import type {
+  NavigationOptions,
+  PaginationOptions,
+  AutoplayOptions,
+  ScrollbarOptions,
+  ThumbsOptions,
+  ZoomOptions,
+  KeyboardOptions,
+  MousewheelOptions,
+  VirtualOptions,
+  FreeModeOptions,
+  GridOptions,
+  ControllerOptions,
+  A11yOptions,
+  HashNavigationOptions,
+  HistoryOptions,
+  CoverflowEffectOptions,
+  CubeEffectOptions,
+  FadeEffectOptions,
+  FlipEffectOptions,
+  CreativeEffectOptions,
+  CardsEffectOptions,
+} from 'swiper/types';
+
+const navigationConfig: NavigationOptions = {
+  nextEl: '.swiper-button-next',
+  prevEl: '.swiper-button-prev',
+  hideOnClick: true,
+};
+
+const paginationConfig: PaginationOptions = {
+  el: '.swiper-pagination',
+  type: 'bullets',
+  clickable: true,
+};
+
+const autoplayConfig: AutoplayOptions = {
+  delay: 3000,
+  disableOnInteraction: false,
+};
+```
+
+---
+
+## React TypeScript
+
+The React components and hooks are fully typed. Import types from `swiper/react`.
+
+### Component types
+
+| Type | Description |
+|---|---|
+| `SwiperProps` | All props accepted by the `<Swiper>` component, including all `SwiperOptions` and React HTML attributes. |
+| `SwiperSlideProps` | All props accepted by the `<SwiperSlide>` component. |
+| `SwiperRef` | The type exposed through a React ref on `<Swiper>`. Contains a `swiper` property that is the Swiper instance. |
+
+### Typed ref
+
+Use `useRef<SwiperRef>` to get a typed reference to the underlying Swiper instance:
+
+```tsx
+import { useRef } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import type { SwiperRef } from 'swiper/react';
+
+function Gallery() {
+  const swiperRef = useRef<SwiperRef>(null);
+
+  function goNext() {
+    swiperRef.current?.swiper.slideNext();
+  }
+
+  return (
+    <>
+      <Swiper ref={swiperRef} slidesPerView={3} spaceBetween={16}>
+        <SwiperSlide>Slide 1</SwiperSlide>
+        <SwiperSlide>Slide 2</SwiperSlide>
+        <SwiperSlide>Slide 3</SwiperSlide>
+      </Swiper>
+      <button onClick={goNext}>Next</button>
+    </>
+  );
+}
+```
+
+### `useSwiper()` and `useSwiperSlide()`
+
+Both hooks return fully typed values.
+
+```tsx
+import { useSwiper, useSwiperSlide } from 'swiper/react';
+import type Swiper from 'swiper';
+
+function SlideControls() {
+  const swiper: Swiper = useSwiper();
+
+  return (
+    <div>
+      <button onClick={() => swiper.slidePrev()}>Prev</button>
+      <button onClick={() => swiper.slideNext()}>Next</button>
+    </div>
+  );
+}
+```
+
+`useSwiperSlide()` returns a `SlideData` object:
+
+```tsx
+import { useSwiperSlide } from 'swiper/react';
+
+function MySlide() {
+  const slideData = useSwiperSlide();
+  // slideData.isActive  — boolean
+  // slideData.isVisible — boolean
+  // slideData.isPrev    — boolean
+  // slideData.isNext    — boolean
+
+  return (
+    <div className={slideData.isActive ? 'active' : ''}>
+      Slide content
+    </div>
+  );
+}
+```
+
+### `onSwiper` callback
+
+The `onSwiper` prop provides the Swiper instance once the component mounts:
+
+```tsx
+import { useState } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import type SwiperType from 'swiper';
+
+function Gallery() {
+  const [swiper, setSwiper] = useState<SwiperType | null>(null);
+
+  return (
+    <Swiper onSwiper={setSwiper} slidesPerView={2}>
+      <SwiperSlide>Slide 1</SwiperSlide>
+      <SwiperSlide>Slide 2</SwiperSlide>
+    </Swiper>
+  );
+}
+```
+
+### Typed event props
+
+Pass typed event handlers directly as props on the `<Swiper>` component:
+
+```tsx
+import type { SwiperEvents } from 'swiper/types';
+
+const handleSlideChange: SwiperEvents['slideChange'] = (swiper) => {
+  console.log('Active index:', swiper.activeIndex);
+};
+
+function Gallery() {
+  return (
+    <Swiper onSlideChange={handleSlideChange} slidesPerView={1}>
+      <SwiperSlide>Slide 1</SwiperSlide>
+      <SwiperSlide>Slide 2</SwiperSlide>
+    </Swiper>
+  );
+}
+```
+
+---
+
+## Vue TypeScript
+
+The Vue components expose the same underlying Swiper types. Obtain the instance via a template ref or the `@swiper` event and type it as `Swiper`.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue';
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import type SwiperType from 'swiper';
+import type { SwiperOptions } from 'swiper/types';
+
+const swiper = ref<SwiperType | null>(null);
+
+const options: SwiperOptions = {
+  slidesPerView: 2,
+  spaceBetween: 16,
+};
+
+function onSwiper(instance: SwiperType) {
+  swiper.value = instance;
+}
+</script>
+
+<template>
+  <Swiper v-bind="options" @swiper="onSwiper">
+    <SwiperSlide>Slide 1</SwiperSlide>
+    <SwiperSlide>Slide 2</SwiperSlide>
+  </Swiper>
+</template>
+```
+
+---
+
+## Typed event handler example
+
+Use `SwiperEvents` as a mapped type to build strongly typed event configuration:
+
+```ts
+import Swiper from 'swiper';
+import { Navigation, Pagination } from 'swiper/modules';
+import type { SwiperOptions, SwiperEvents } from 'swiper/types';
+
+const events: Partial<SwiperEvents> = {
+  init(swiper) {
+    console.log('Swiper ready');
+  },
+  slideChange(swiper) {
+    console.log('Slide:', swiper.realIndex);
+  },
+  progress(swiper, progress) {
+    console.log('Progress:', progress.toFixed(2));
+  },
+  reachEnd(swiper) {
+    console.log('Reached the end');
+  },
+};
+
+const options: SwiperOptions = {
+  modules: [Navigation, Pagination],
+  slidesPerView: 'auto',
+  spaceBetween: 24,
+  navigation: true,
+  pagination: { clickable: true },
+  on: events,
+};
+
+const swiper = new Swiper('.swiper', options);
+```

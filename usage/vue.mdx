@@ -1,0 +1,222 @@
+---
+title: 'Vue'
+description: 'Use Swiper with Vue 3 via the official Swiper Vue components.'
+---
+
+## Installation
+
+The Vue components are included in the `swiper` package — no separate install needed.
+
+<Tabs>
+  <Tab title="npm">
+    ```bash
+    npm install swiper
+    ```
+  </Tab>
+  <Tab title="yarn">
+    ```bash
+    yarn add swiper
+    ```
+  </Tab>
+  <Tab title="pnpm">
+    ```bash
+    pnpm add swiper
+    ```
+  </Tab>
+</Tabs>
+
+## Basic usage
+
+Import `Swiper` and `SwiperSlide` from `swiper/vue`, register them as components, and add them to your template.
+
+```vue App.vue
+<template>
+  <Swiper :slides-per-view="1" :space-between="30">
+    <SwiperSlide>Slide 1</SwiperSlide>
+    <SwiperSlide>Slide 2</SwiperSlide>
+    <SwiperSlide>Slide 3</SwiperSlide>
+  </Swiper>
+</template>
+
+<script setup>
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import 'swiper/css';
+</script>
+```
+
+<Note>
+  All `SwiperOptions` are available as props on the `<Swiper>` component — every configuration
+  option maps directly to a prop. Use camelCase or kebab-case as you prefer in templates.
+</Note>
+
+## Using modules
+
+Import modules from `swiper/modules`, pass them via the `modules` prop, and import the CSS for each module.
+
+```vue App.vue
+<template>
+  <Swiper
+    :modules="modules"
+    :slides-per-view="3"
+    :space-between="50"
+    navigation
+    :pagination="{ clickable: true }"
+    :scrollbar="{ draggable: true }"
+    @swiper="onSwiper"
+  >
+    <SwiperSlide>Slide 1</SwiperSlide>
+    <SwiperSlide>Slide 2</SwiperSlide>
+    <SwiperSlide>Slide 3</SwiperSlide>
+    <SwiperSlide>Slide 4</SwiperSlide>
+    <SwiperSlide>Slide 5</SwiperSlide>
+  </Swiper>
+</template>
+
+<script setup>
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import 'swiper/css/scrollbar';
+
+const modules = [Navigation, Pagination, Scrollbar, A11y];
+
+const onSwiper = (swiper) => {
+  console.log(swiper);
+};
+</script>
+```
+
+## Getting the Swiper instance
+
+Listen to the `@swiper` event to receive the Swiper instance when it is ready.
+
+```vue App.vue
+<template>
+  <Swiper :slides-per-view="1" @swiper="onSwiper">
+    <SwiperSlide>Slide 1</SwiperSlide>
+    <SwiperSlide>Slide 2</SwiperSlide>
+    <SwiperSlide>Slide 3</SwiperSlide>
+  </Swiper>
+  <button @click="swiperInstance?.slideNext()">Next</button>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import 'swiper/css';
+
+const swiperInstance = ref(null);
+
+const onSwiper = (swiper) => {
+  swiperInstance.value = swiper;
+};
+</script>
+```
+
+## `useSwiper` composable
+
+The `useSwiper` composable provides any child component with access to the parent Swiper instance. It must be called inside a component rendered within `<Swiper>`.
+
+```vue SlideControls.vue
+<template>
+  <div>
+    <button @click="swiper.slidePrev()">Prev</button>
+    <button @click="swiper.slideNext()">Next</button>
+  </div>
+</template>
+
+<script setup>
+import { useSwiper } from 'swiper/vue';
+
+const swiper = useSwiper();
+</script>
+```
+
+```vue App.vue
+<template>
+  <Swiper :slides-per-view="1">
+    <SwiperSlide>Slide 1</SwiperSlide>
+    <SwiperSlide>Slide 2</SwiperSlide>
+    <SwiperSlide>Slide 3</SwiperSlide>
+    <SlideControls />
+  </Swiper>
+</template>
+
+<script setup>
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import SlideControls from './SlideControls.vue';
+import 'swiper/css';
+</script>
+```
+
+<Note>
+  `useSwiper` returns a `Ref<SwiperClass>`. Access the instance via `.value` inside `<script setup>`.
+</Note>
+
+## `useSwiperSlide` composable
+
+The `useSwiperSlide` composable returns reactive state about the current slide. Call it inside a component that is a descendant of `<SwiperSlide>`.
+
+```vue SlideStatus.vue
+<template>
+  <div>
+    <p>Active: {{ slideData.isActive }}</p>
+    <p>Next: {{ slideData.isNext }}</p>
+    <p>Prev: {{ slideData.isPrev }}</p>
+    <p>Visible: {{ slideData.isVisible }}</p>
+  </div>
+</template>
+
+<script setup>
+import { useSwiperSlide } from 'swiper/vue';
+
+const slideData = useSwiperSlide();
+</script>
+```
+
+```vue App.vue
+<template>
+  <Swiper :slides-per-view="1">
+    <SwiperSlide>
+      <SlideStatus />
+    </SwiperSlide>
+    <SwiperSlide>
+      <SlideStatus />
+    </SwiperSlide>
+  </Swiper>
+</template>
+
+<script setup>
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import SlideStatus from './SlideStatus.vue';
+import 'swiper/css';
+</script>
+```
+
+## Virtual slides
+
+Use the `Virtual` module with the `virtual` prop to render only the visible slides. Assign a `virtual-index` to each `<SwiperSlide>`.
+
+```vue App.vue
+<template>
+  <Swiper :modules="[Virtual]" :slides-per-view="3" :space-between="10" virtual>
+    <SwiperSlide
+      v-for="(slide, index) in slides"
+      :key="slide"
+      :virtual-index="index"
+    >
+      {{ slide }}
+    </SwiperSlide>
+  </Swiper>
+</template>
+
+<script setup>
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import { Virtual } from 'swiper/modules';
+import 'swiper/css';
+
+const slides = Array.from({ length: 1000 }, (_, i) => `Slide ${i + 1}`);
+</script>
+```

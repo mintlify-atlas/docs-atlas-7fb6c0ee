@@ -1,0 +1,245 @@
+---
+title: 'Web Component (Element)'
+description: 'Use Swiper as native custom elements — framework-agnostic and CDN-friendly.'
+---
+
+Swiper ships as Web Components (`<swiper-container>` and `<swiper-slide>`) that work in any HTML page or JavaScript framework without extra dependencies.
+
+## Installation
+
+<Tabs>
+  <Tab title="npm">
+    ```bash
+    npm install swiper
+    ```
+  </Tab>
+  <Tab title="yarn">
+    ```bash
+    yarn add swiper
+    ```
+  </Tab>
+  <Tab title="pnpm">
+    ```bash
+    pnpm add swiper
+    ```
+  </Tab>
+</Tabs>
+
+## Registering the elements
+
+You must register the custom elements before using them in HTML. There are two approaches:
+
+<Tabs>
+  <Tab title="Modular (recommended)">
+    Import only the Swiper core and register manually. Use this when you want to add specific
+    modules yourself to keep the bundle small.
+
+    ```js main.js
+    import { register } from 'swiper/element';
+
+    register();
+    ```
+  </Tab>
+  <Tab title="Bundle">
+    Import the bundle entry point, which registers the elements automatically and includes all
+    Swiper modules.
+
+    ```js main.js
+    import 'swiper/element/bundle';
+    ```
+
+    No call to `register()` is needed — it runs automatically on import.
+  </Tab>
+</Tabs>
+
+## Basic HTML usage
+
+After registration, use `<swiper-container>` and `<swiper-slide>` like any other HTML element.
+
+```html index.html
+<swiper-container slides-per-view="1" space-between="30" navigation="true">
+  <swiper-slide>Slide 1</swiper-slide>
+  <swiper-slide>Slide 2</swiper-slide>
+  <swiper-slide>Slide 3</swiper-slide>
+</swiper-container>
+```
+
+<Note>
+  Swiper injects its own styles into the Shadow DOM. You do not need to import any CSS manually
+  when using the Web Component API.
+</Note>
+
+## Setting parameters
+
+Swiper options can be applied either as HTML attributes or as JavaScript properties.
+
+### Via HTML attributes
+
+Attribute names are the kebab-case version of the camelCase option name.
+
+```html
+<!-- camelCase option: slidesPerView → kebab-case attribute: slides-per-view -->
+<swiper-container
+  slides-per-view="3"
+  space-between="20"
+  loop="true"
+  pagination="true"
+  navigation="true"
+>
+  <swiper-slide>Slide 1</swiper-slide>
+  <swiper-slide>Slide 2</swiper-slide>
+  <swiper-slide>Slide 3</swiper-slide>
+</swiper-container>
+```
+
+### Via JavaScript properties
+
+For complex options (objects, arrays) that cannot easily be serialized as attribute strings, set them as JavaScript properties directly on the element.
+
+```js
+const swiperEl = document.querySelector('swiper-container');
+
+Object.assign(swiperEl, {
+  slidesPerView: 3,
+  spaceBetween: 20,
+  pagination: {
+    clickable: true,
+  },
+  breakpoints: {
+    640: { slidesPerView: 2 },
+    1024: { slidesPerView: 4 },
+  },
+});
+
+swiperEl.initialize();
+```
+
+## Deferred initialization
+
+By default, Swiper initializes as soon as the element connects to the DOM. To defer initialization until you have finished setting all parameters, set `init="false"` and call `.initialize()` manually.
+
+```html
+<swiper-container init="false">
+  <swiper-slide>Slide 1</swiper-slide>
+  <swiper-slide>Slide 2</swiper-slide>
+  <swiper-slide>Slide 3</swiper-slide>
+</swiper-container>
+```
+
+```js
+const swiperEl = document.querySelector('swiper-container');
+
+// Set complex params as JS properties before init
+Object.assign(swiperEl, {
+  slidesPerView: 2,
+  spaceBetween: 30,
+  navigation: true,
+  pagination: { clickable: true },
+});
+
+// Initialize
+swiperEl.initialize();
+```
+
+## Styling inside Shadow DOM
+
+The `<swiper-container>` element uses a Shadow DOM, so regular CSS selectors cannot pierce into it directly. Use `injectStyles` to inject a CSS string, or `injectStylesUrls` to load external stylesheets into the shadow root.
+
+```js
+const swiperEl = document.querySelector('swiper-container');
+
+Object.assign(swiperEl, {
+  // Inject raw CSS into the shadow root
+  injectStyles: [
+    `
+    .swiper-button-next,
+    .swiper-button-prev {
+      color: #ff6600;
+    }
+    `,
+  ],
+
+  // Or load external CSS files into the shadow root
+  injectStylesUrls: ['/path/to/custom-swiper.css'],
+});
+
+swiperEl.initialize();
+```
+
+## Events
+
+Swiper dispatches all events as DOM `CustomEvent`s on the `<swiper-container>` element. By default, the event name is the lowercase Swiper event name prefixed with `swiper` (e.g., the `slideChange` event becomes `swiperslidechange`).
+
+```js
+const swiperEl = document.querySelector('swiper-container');
+
+swiperEl.addEventListener('swiperslidechange', (event) => {
+  console.log('Slide changed', event.detail);
+});
+```
+
+### Changing the events prefix
+
+Set the `eventsPrefix` property to customize or remove the prefix.
+
+```js
+Object.assign(swiperEl, {
+  eventsPrefix: 'myswiper-', // events like "myswiper-slidechange"
+});
+
+// Or disable the prefix entirely
+Object.assign(swiperEl, {
+  eventsPrefix: '',           // events like "slidechange"
+});
+```
+
+## CDN usage
+
+You can load Swiper elements directly from a CDN with no build step.
+
+```html index.html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Swiper Element CDN</title>
+    <style>
+      swiper-container {
+        width: 100%;
+        height: 300px;
+      }
+    </style>
+  </head>
+  <body>
+    <swiper-container navigation="true" pagination="true">
+      <swiper-slide>Slide 1</swiper-slide>
+      <swiper-slide>Slide 2</swiper-slide>
+      <swiper-slide>Slide 3</swiper-slide>
+    </swiper-container>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/swiper@latest/swiper-element-bundle.min.js"
+    ></script>
+  </body>
+</html>
+```
+
+<Tip>
+  The CDN bundle script registers the custom elements automatically when the page loads —
+  no JavaScript initialization code is required for simple use cases.
+</Tip>
+
+## Accessing the Swiper instance
+
+After initialization, the `.swiper` property on the container element exposes the underlying Swiper instance.
+
+```js
+const swiperEl = document.querySelector('swiper-container');
+
+// After the element has initialized
+const swiper = swiperEl.swiper;
+
+swiper.slideNext();
+console.log(swiper.activeIndex);
+```

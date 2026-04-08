@@ -1,0 +1,345 @@
+---
+title: "Loop mode & autoplay"
+description: "Configure infinite looping and automatic slide advancement in Swiper."
+keywords: ["swiper", "loop", "autoplay", "infinite", "rewind", "delay"]
+---
+
+Swiper supports two approaches to continuous navigation — loop mode and rewind mode — and an autoplay module that advances slides automatically on a timer.
+
+---
+
+## Loop mode
+
+Setting `loop: true` enables continuous loop mode. Swiper clones slides at the beginning and end of the wrapper so the slider appears to scroll infinitely in either direction.
+
+```js
+const swiper = new Swiper('.swiper', {
+  slidesPerView: 1,
+  spaceBetween: 30,
+  loop: true,
+});
+```
+
+### Slide count requirements
+
+Loop mode works by rearranging DOM elements. For it to function correctly, the total number of real slides must satisfy all of the following conditions:
+
+- Greater than or equal to `slidesPerView` + `slidesPerGroup`
+- Plus `1` if `centeredSlides: true`
+- Divisible by `slidesPerGroup` (or enable `loopAddBlankSlides`)
+- Divisible by `grid.rows` (or enable `loopAddBlankSlides`)
+
+<Warning>
+  If you do not have enough slides, loop mode will produce visual artifacts or stop working. Add more slides or reduce `slidesPerView`.
+</Warning>
+
+### Loop parameters
+
+<ParamField path="loop" type="boolean" default="false">
+  Enables continuous loop mode.
+</ParamField>
+
+<ParamField path="loopAdditionalSlides" type="number" default="0">
+  Number of extra cloned slides to add beyond the minimum required. Increase this value when using `breakpoints` that raise `slidesPerView` at wider screens — the cloned set must cover the highest `slidesPerView` value.
+
+  ```js
+  const swiper = new Swiper('.swiper', {
+    loop: true,
+    loopAdditionalSlides: 2,
+  });
+  ```
+</ParamField>
+
+<ParamField path="loopPreventsSliding" type="boolean" default="true">
+  When enabled, `slideNext()` and `slidePrev()` are ignored while a loop transition is already running. This prevents visual glitches caused by rapid user input.
+</ParamField>
+
+<ParamField path="loopAddBlankSlides" type="boolean" default="true">
+  Automatically appends blank slides to make the total slide count divisible by `slidesPerGroup` or `grid.rows`. Blank slides receive the `swiper-slide-blank` class.
+</ParamField>
+
+### Loop mode example
+
+```html
+<div class="swiper">
+  <div class="swiper-wrapper">
+    <div class="swiper-slide">Slide 1</div>
+    <div class="swiper-slide">Slide 2</div>
+    <div class="swiper-slide">Slide 3</div>
+    <div class="swiper-slide">Slide 4</div>
+    <div class="swiper-slide">Slide 5</div>
+  </div>
+  <div class="swiper-pagination"></div>
+  <div class="swiper-button-next"></div>
+  <div class="swiper-button-prev"></div>
+</div>
+```
+
+```js
+import Swiper from 'swiper';
+import { Navigation, Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+
+const swiper = new Swiper('.swiper', {
+  modules: [Navigation, Pagination],
+  slidesPerView: 1,
+  spaceBetween: 30,
+  loop: true,
+  pagination: {
+    el: '.swiper-pagination',
+    clickable: true,
+  },
+  navigation: {
+    nextEl: '.swiper-button-next',
+    prevEl: '.swiper-button-prev',
+  },
+});
+```
+
+---
+
+## Rewind mode
+
+Rewind mode is a lighter alternative to loop mode. Instead of cloning slides, it simply navigates back to the first slide when the user presses "next" on the last slide (and vice versa). No DOM rearrangement occurs.
+
+```js
+const swiper = new Swiper('.swiper', {
+  rewind: true,
+});
+```
+
+<ParamField path="rewind" type="boolean" default="false">
+  Enables rewind mode. Pressing "next" on the last slide goes back to the first slide. Pressing "prev" on the first slide jumps to the last slide.
+</ParamField>
+
+<Warning>
+  Do not use `rewind: true` together with `loop: true`. They are mutually exclusive and enabling both produces undefined behavior.
+</Warning>
+
+### Loop vs. rewind
+
+| | Loop | Rewind |
+|---|---|---|
+| Infinite scrolling appearance | Yes | No — jumps visibly |
+| Clones DOM elements | Yes | No |
+| Minimum slide count | Required | None |
+| Works with `centeredSlides` | Yes | Yes |
+| Works with `autoplay` | Yes | Yes |
+
+---
+
+## Autoplay
+
+The Autoplay module advances slides automatically at a set interval. Import and register it before use.
+
+```js
+import Swiper from 'swiper';
+import { Autoplay } from 'swiper/modules';
+
+const swiper = new Swiper('.swiper', {
+  modules: [Autoplay],
+  autoplay: {
+    delay: 3000,
+  },
+});
+```
+
+Pass `autoplay: true` to use all default settings:
+
+```js
+const swiper = new Swiper('.swiper', {
+  modules: [Autoplay],
+  autoplay: true,
+});
+```
+
+### Autoplay parameters
+
+<ParamField path="autoplay.delay" type="number" default="3000">
+  Time in milliseconds between slide transitions.
+
+  You can set a per-slide delay using the `data-swiper-autoplay` attribute on a slide element:
+
+  ```html
+  <!-- This slide displays for 5 seconds before advancing -->
+  <div class="swiper-slide" data-swiper-autoplay="5000">Slide 1</div>
+  ```
+</ParamField>
+
+<ParamField path="autoplay.disableOnInteraction" type="boolean" default="true">
+  When `true`, autoplay stops permanently after the user interacts with the slider. Set to `false` to restart autoplay after every interaction.
+</ParamField>
+
+<ParamField path="autoplay.pauseOnMouseEnter" type="boolean" default="false">
+  Pauses autoplay while the cursor is over the Swiper container.
+</ParamField>
+
+<ParamField path="autoplay.reverseDirection" type="boolean" default="false">
+  Advances slides in reverse order (right to left).
+</ParamField>
+
+<ParamField path="autoplay.stopOnLastSlide" type="boolean" default="false">
+  Stops autoplay when the last slide is reached. Has no effect in loop mode.
+</ParamField>
+
+<ParamField path="autoplay.waitForTransition" type="boolean" default="true">
+  When enabled, autoplay waits for the slide transition to complete before starting the next delay timer. Disable only when using Virtual Translate mode.
+</ParamField>
+
+### Autoplay methods
+
+Control autoplay programmatically via the `swiper.autoplay` object:
+
+| Method | Description |
+|---|---|
+| `swiper.autoplay.start()` | Starts autoplay. Returns `true` if successful. |
+| `swiper.autoplay.stop()` | Stops autoplay. Returns `true` if successful. |
+| `swiper.autoplay.pause()` | Pauses autoplay without resetting the timer. |
+| `swiper.autoplay.resume()` | Resumes autoplay after a pause. |
+
+**Properties:**
+
+| Property | Type | Description |
+|---|---|---|
+| `swiper.autoplay.running` | `boolean` | Whether autoplay is currently active. |
+| `swiper.autoplay.paused` | `boolean` | Whether autoplay is currently paused. |
+| `swiper.autoplay.timeLeft` | `number` | Milliseconds remaining before the next transition (only when paused). |
+
+### Autoplay events
+
+Register event handlers in the `on` option or via `swiper.on()`:
+
+| Event | Description |
+|---|---|
+| `autoplayStart` | Fires when autoplay starts. |
+| `autoplayStop` | Fires when autoplay stops. |
+| `autoplayPause` | Fires when autoplay pauses. |
+| `autoplayResume` | Fires when autoplay resumes. |
+| `autoplayTimeLeft` | Fires continuously while autoplay is running. Receives `timeLeft` (ms remaining) and `percentage` (fraction of delay elapsed). |
+| `autoplay` | Fires each time a slide changes due to autoplay. |
+
+### Autoplay example with navigation
+
+```html
+<div class="swiper">
+  <div class="swiper-wrapper">
+    <div class="swiper-slide">Slide 1</div>
+    <div class="swiper-slide">Slide 2</div>
+    <div class="swiper-slide">Slide 3</div>
+    <div class="swiper-slide">Slide 4</div>
+    <div class="swiper-slide">Slide 5</div>
+  </div>
+  <div class="swiper-pagination"></div>
+  <div class="swiper-button-next"></div>
+  <div class="swiper-button-prev"></div>
+</div>
+```
+
+```js
+import Swiper from 'swiper';
+import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+
+const swiper = new Swiper('.swiper', {
+  modules: [Autoplay, Navigation, Pagination],
+  spaceBetween: 30,
+  centeredSlides: true,
+  loop: true,
+
+  autoplay: {
+    delay: 2500,
+    disableOnInteraction: false,
+    pauseOnMouseEnter: true,
+  },
+
+  pagination: {
+    el: '.swiper-pagination',
+    clickable: true,
+  },
+
+  navigation: {
+    nextEl: '.swiper-button-next',
+    prevEl: '.swiper-button-prev',
+  },
+});
+```
+
+### Progress bar example
+
+Use the `autoplayTimeLeft` event to build a visual progress indicator that shows how long until the next slide:
+
+```html
+<div class="swiper">
+  <div class="swiper-wrapper">
+    <div class="swiper-slide">Slide 1</div>
+    <div class="swiper-slide">Slide 2</div>
+    <div class="swiper-slide">Slide 3</div>
+  </div>
+  <!-- Custom progress bar -->
+  <div class="autoplay-progress">
+    <svg viewBox="0 0 48 48">
+      <circle cx="24" cy="24" r="20"></circle>
+    </svg>
+    <span></span>
+  </div>
+</div>
+```
+
+```js
+import Swiper from 'swiper';
+import { Autoplay } from 'swiper/modules';
+
+const progressCircle = document.querySelector('.autoplay-progress svg');
+const progressContent = document.querySelector('.autoplay-progress span');
+
+const swiper = new Swiper('.swiper', {
+  modules: [Autoplay],
+  loop: true,
+  autoplay: {
+    delay: 4000,
+    disableOnInteraction: false,
+  },
+  on: {
+    autoplayTimeLeft(swiper, timeLeft, percentage) {
+      progressCircle.style.setProperty('--progress', 1 - percentage);
+      progressContent.textContent = `${Math.ceil(timeLeft / 1000)}s`;
+    },
+  },
+});
+```
+
+```css
+.autoplay-progress {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  z-index: 10;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #fff;
+}
+
+.autoplay-progress svg {
+  --progress: 0;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  stroke-width: 4px;
+  stroke: #fff;
+  fill: none;
+  stroke-dashoffset: calc(125.6px * (1 - var(--progress)));
+  stroke-dasharray: 125.6px;
+  transform: rotate(-90deg);
+}
+```
